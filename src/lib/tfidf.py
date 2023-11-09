@@ -25,8 +25,8 @@ def inverse_document_frequency(directory: str) -> dict[str: float]:
     res = {}
 
     for speech in files:
-        words_in_file = []
         with open(f"{directory}/{speech}", "r") as fd:
+            words_in_file = []
             text = fd.read()
             words = text.split(" ")
             for w in words:

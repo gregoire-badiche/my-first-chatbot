@@ -47,6 +47,8 @@ def most_repeated_word(name):
             res = [k]
     return res
 
+# ----------- A REFAIRE
+
 def who_spoke_of(word):
     files = list_files(f"{ROOT}/cleaned", ".txt")
     presidents = set()

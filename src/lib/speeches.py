@@ -1,6 +1,9 @@
 import os, re
 from shutil import rmtree as remove_folder
-from src.lib.utils import ROOT
+if(__name__ == "__main__"):
+    from utils import ROOT
+else:
+    from src.lib.utils import ROOT
 
 def get_name(file_name: str) -> str:
     """Extracts the President's name from the file name"""

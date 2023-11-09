@@ -1,8 +1,16 @@
-import os, re
-from shutil import rmtree as remove_folder
+import os
 
 # the `src` directory
 ROOT = f"{os.path.dirname(os.path.realpath(__file__))}/.."
+
+PRESIDENTS = [
+    "Giscard dEstaing",
+    "Mitterrand",
+    "Chirac",
+    "Sarcozy",
+    "Hollande",
+    "Macron",
+]
 
 def list_files(directory: str, extension: str) -> list[str]:
     """Lists all the files ending with `extension` in a given directory"""

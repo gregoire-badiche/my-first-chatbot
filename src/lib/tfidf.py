@@ -1,5 +1,8 @@
 import math
-from src.lib.utils import list_files
+if(__name__ == "__main__"):
+    from utils import list_files
+else:
+    from src.lib.utils import list_files
 
 def term_frequency(text: str) -> dict[str, int]:
     """Returns a dictionary associating with each word the number of times it appears in the string"""
@@ -15,7 +18,7 @@ def term_frequency(text: str) -> dict[str, int]:
 
     return res
 
-def inverse_term_frequency(directory: str) -> dict[str: float]:
+def inverse_document_frequency(directory: str) -> dict[str: float]:
     """Returns a dictionary associating the IDF score with each word of each speech file in the directory"""
 
     files = list_files(directory, '.txt')
@@ -43,7 +46,7 @@ def inverse_term_frequency(directory: str) -> dict[str: float]:
 def tf_idf_score(directory: str) -> tuple[list[list[int]], list[str], list[str]]:
     """Computes the TF-IDF score"""
 
-    itf = inverse_term_frequency(directory)
+    itf = inverse_document_frequency(directory)
     files = list_files(directory, '.txt')
 
     scores = { k: [0] * len(files) for k in itf.keys() }

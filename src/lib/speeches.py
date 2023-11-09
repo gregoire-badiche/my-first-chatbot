@@ -1,6 +1,6 @@
 import os, re
 from shutil import rmtree as remove_folder
-from src.lib.utils import list_files, ROOT
+from src.lib.utils import ROOT
 
 def get_name(file_name: str) -> str:
     """Extracts the President's name from the file name"""
@@ -67,6 +67,7 @@ def convert_texts(files: list[str]) -> None:
                 f_write.write(cleaned)
 
 if(__name__ == "__main__"):
+    from src.lib.utils import list_files
     files = list_files(f"{ROOT}/speeches", 'txt')
     convert_texts(files)
     print("Cleaned speeches")

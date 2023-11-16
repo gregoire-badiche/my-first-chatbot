@@ -43,7 +43,7 @@ def inverse_document_frequency(directory: str) -> dict[str: float]:
     
     return res
 
-def tf_idf_score(directory: str) -> tuple[list[list[int]], list[str], list[str]]:
+def tf_idf_score(directory: str) -> tuple[list[list[int]], list[str], list[str]]: 
     """Computes the TF-IDF score"""
 
     itf = inverse_document_frequency(directory)

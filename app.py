@@ -4,6 +4,7 @@ from src.lib.utils import ROOT, PRESIDENTS, list_files
 
 (scores, words, files) = tfidf.tf_idf_score(f"{ROOT}/cleaned")
 
+#1
 def least_important_words():
     res = []
     for i in range(len(scores)):
@@ -11,7 +12,7 @@ def least_important_words():
             res.append(words[i])
     
     return res
-
+#2
 def highest_score():
     res = []
     highest = 0
@@ -26,7 +27,7 @@ def highest_score():
                     res = []
                     res.append(words[i])
     return res
-
+#3
 def most_repeated_word(name):
     files = list_files(f"{ROOT}/cleaned", ".txt")
     filtered_files = [f for f in files if name in f]
@@ -48,9 +49,13 @@ def most_repeated_word(name):
     return res
 
 # ----------- A REFAIRE
+#4
 
 def who_spoke_of(word):
     files = list_files(f"{ROOT}/cleaned", ".txt")
+    word=word.lower()
+    plus=0
+    presidentplus=[]
     presidents = set()
     for f in files:
         with open(f"{ROOT}/cleaned/{f}", "r") as t:
@@ -59,13 +64,17 @@ def who_spoke_of(word):
             if(word in frequencies.keys()):
                 name = speeches.get_name(f)
                 presidents.add(name)
-    first_president = ""
-    for p in PRESIDENTS:
-        if p in presidents:
-            first_president = p
-            break
-    return (presidents, first_president)
 
+                if(frequencies[word] == plus):
+                    presidentplus.append(name)
+                if(frequencies[word] > plus):
+                    presidentplus = [name]
+                    plus = frequencies[word]
+
+    return ( presidents, presidentplus )
+
+print (who_spoke_of("Nation"))
+ 
 def who_spoke_first(words, operation):
     pres = set()
     for w in words:
@@ -84,6 +93,7 @@ def who_spoke_first(words, operation):
             break
     return first_president
 
+    
 def words_sayed_by_all():
     res = []
     for i in range(len(scores)):

@@ -35,7 +35,7 @@ def display_names(names: list[str]) -> None:
 def clean_text(text: str) -> str:
     """Cleans the text by lowercasing it and replacing any non-latin character or punctuation mark with spaces"""
 
-    LOWERCASE_LETTERS = "abcdefghijklmnopqrstuvwxyzüéâäåçêëèïîìôöòûùÿáíóúñ"
+    LOWERCASE_LETTERS = "abcdefghijklmnopqrstuvwxyzüéâäåàçêëèïîìôöòûùÿáíóúñ"
 
     cleaned_text = ""
     l_text = text.lower()

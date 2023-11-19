@@ -1,8 +1,15 @@
+#############################################
+#                                           #
+#  utils.py - A collection of useful tools  #
+#                                           #
+#############################################
+
 import os
 
 # the `src` directory
 ROOT = f"{os.path.dirname(os.path.realpath(__file__))}/.."
 
+# The name, in chronological order, of all the presidents
 PRESIDENTS = [
     "Giscard dEstaing",
     "Mitterrand",

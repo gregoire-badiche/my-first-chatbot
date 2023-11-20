@@ -61,9 +61,8 @@ def inverse_document_frequency(directory: str) -> dict[str: float]:
                     res[w] = 1
     
     # Applies the formula for every word
-    # Note : math.log performs a base10 log
     for key in res.keys():
-        res[key] = math.log(1 / res[key])
+        res[key] = math.log10(1 / res[key])
     
     return res
 

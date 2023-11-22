@@ -12,6 +12,7 @@ def least_important_words():
             res.append(words[i])
     
     return res
+
 #2
 def highest_score():
     res = []
@@ -27,6 +28,7 @@ def highest_score():
                     res = []
                     res.append(words[i])
     return res
+
 #3
 def most_repeated_word(name):
     files = list_files(f"{ROOT}/cleaned", ".txt")
@@ -48,9 +50,7 @@ def most_repeated_word(name):
             res = [k]
     return res
 
-# ----------- A REFAIRE
 #4
-
 def who_spoke_of(word):
     files = list_files(f"{ROOT}/cleaned", ".txt")
     word=word.lower()
@@ -73,8 +73,7 @@ def who_spoke_of(word):
 
     return ( presidents, presidentplus )
 
-print (who_spoke_of("Nation"))
- 
+# 5
 def who_spoke_first(words, operation):
     pres = set()
     for w in words:
@@ -93,7 +92,7 @@ def who_spoke_first(words, operation):
             break
     return first_president
 
-    
+# 6
 def words_sayed_by_all():
     res = []
     for i in range(len(scores)):
@@ -105,4 +104,18 @@ def words_sayed_by_all():
             res.append(words[i])
     return res
 
-print(who_spoke_first(["climat", "écologie"], "and"))
+if(__name__ == "__main__"):
+    choice = 0
+    print("Choose your feature")
+    if(choice == 1):
+        print(" ".join(least_important_words()))
+    elif(choice == 2):
+        print(" ".join(highest_score()))
+    elif(choice == 3):
+        print(" ".join(most_repeated_word("Chirac")))
+    elif(choice == 4):
+        print(" ".join(who_spoke_of("nation")))
+    elif(choice == 5):
+        print(who_spoke_first(["nation", "climat"], "or"))
+    elif(choice == 6):
+        print(" ".join(words_sayed_by_all()))

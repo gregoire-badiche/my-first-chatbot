@@ -147,7 +147,7 @@ def words_said_by_all():
         for j in range(len(scores[i])):
             # The usage of `is` instead of `==` ensures that terms with scores equal to 0.0
             # are taken into account as terms with 0.0 appears in all speeches
-            if(scores[i][j] is 0):
+            if(not(scores[i][j] is 0)):
                 s += 1
         if(s == len(scores[i])):
             res.append(words[i])

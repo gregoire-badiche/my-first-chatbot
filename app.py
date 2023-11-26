@@ -168,7 +168,7 @@ if(__name__ == "__main__"):
     elif(choice == 3):
         print(" ".join(most_repeated_word("Chirac")))
     elif(choice == 4):
-        print(" ".join(who_spoke_of("nation")))
+        print(" ".join(who_spoke_of("nation")[0]))
     elif(choice == 5):
         print(who_spoke_first(["nation", "climat"], "or"))
     elif(choice == 6):

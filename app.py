@@ -59,7 +59,7 @@ def most_repeated_word(name: str) -> list[str]:
 
     files = list_files(f"{ROOT}/cleaned", ".txt")
     # All the speeches of the given president, as his name should be in the files names
-    filtered_files = [f for f in files if name in f]
+    filtered_files = [f for f in files if name in f.lower()]
     # The big merged text
     text = ""
     # We read and merge all texts

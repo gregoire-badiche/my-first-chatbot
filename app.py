@@ -1,6 +1,8 @@
 import src.lib.speeches as speeches
 import src.lib.tfidf as tfidf
 from src.lib.utils import ROOT, PRESIDENTS, list_files
+
+# Used for sys.extit()
 import sys
 
 (scores, words, files) = tfidf.tf_idf_score(f"{ROOT}/cleaned")
@@ -120,6 +122,7 @@ def who_spoke_first(words: list[str], operation: str) -> str:
     # The set of president who spoke of the given word
     pres = set()
     for w in words:
+        # Here we get a set and a string that we don't need
         (p, _) = who_spoke_of(w)
         if(pres == set()):
             pres = p

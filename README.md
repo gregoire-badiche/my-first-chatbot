@@ -19,7 +19,7 @@ If you want to refresh the cleaned speeches, run the `src/lib/speeches.py` file
 If you want to print the TF-IDF scores matrix, run the `src/lib/tfidf.py` file
 
 By: 
-- Gregoire Badiche
-- Samy gharnaout
-- Christine khazaka
+- Grégoire BADICHE
+- Samy GHARNAOUT
+- Christine KHAZAKA
 Class: L1-INT-4

@@ -179,7 +179,10 @@ if(__name__ == "__main__"):
             scene.exit(False)
             sys.exit(0)
         else:
-            choice = int(choice)
+            try:
+                choice = int(choice)
+            except:
+                choice = 7
         if(choice == 1):
             scene.new("The least important words are :\n" + ", ".join(least_important_words()))
         elif(choice == 2):

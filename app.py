@@ -1,9 +1,7 @@
 import src.lib.speeches as speeches
 import src.lib.tfidf as tfidf
+from src.lib.ux import Scene
 from src.lib.utils import ROOT, PRESIDENTS, list_files
-
-# Used for sys.extit()
-import sys
 
 (scores, words, files) = tfidf.tf_idf_score(f"{ROOT}/cleaned")
 
@@ -143,38 +141,91 @@ def words_said_by_all():
     """Determine the list of words said by all the presidents"""
     res = []
     for i in range(len(scores)):
-        s = 0
-        for j in range(len(scores[i])):
-            # The usage of `is` instead of `==` ensures that terms with scores equal to 0.0
-            # are taken into account as terms with 0.0 appears in all speeches
-            if(not(scores[i][j] is 0)):
-                s += 1
-        if(s == len(scores[i])):
+        # Only scores with only 0 are said by all presidents, as in the TF-IDF formula IDF = log10(1) = 0
+        if(sum(scores[i]) == 0):
             res.append(words[i])
     return res
 
 if(__name__ == "__main__"):
-    print("1. Least important word")
-    print("2. Word with highest score")
-    print("3. Chirac's most repeated word")
-    print("4. List of president who spoke of 'nation'")
-    print("5. First president to talk about climat or nation")
-    print("6. List of words said by all")
-    choice = int(input("Choose your feature\n"))
-    if(choice == 1):
-        print(" ".join(least_important_words()))
-    elif(choice == 2):
-        print(" ".join(highest_score()))
-    elif(choice == 3):
-        print(" ".join(most_repeated_word("Chirac")))
-    elif(choice == 4):
-        print(" ".join(who_spoke_of("nation")[0]))
-    elif(choice == 5):
-        print(who_spoke_first(["nation", "climat"], "or"))
-    elif(choice == 6):
-        print(" ".join(words_said_by_all()))
-    else:
-        print("Unknown feature")
-        # Exit code 1 indicates an error (unknown feature)
-        sys.exit(1)
-    sys.exit(0)
+    import signal
+    # Used for sys.extit()
+    import sys
+
+    scene = Scene()
+
+    def exit_handler(sig, frame):
+        signal.signal(sig, signal.SIG_IGN) # ignore additional signals
+        scene.exit()
+        sys.exit(0)
+    
+    signal.signal(signal.SIGINT, exit_handler)
+
+
+    ptr = []
+    scene.new("Hi!")
+    scene.new("Type 'exit' or hit CTRL+C at any time to exit gracefully")
+    scene.new("Which feature would you like to test today?")
+    scene.new(
+        "1. Least important word\n"
+        "2. Word with highest score\n"
+        "3. Get the most repeated word from a president\n"
+        "4. Get the list of president who spoke of a given word\n"
+        "5. First president to talk about two words based on a set operation\n"
+        "6. List of words said by all presidents\n")
+    while True:
+        scene.handle(ptr)
+        choice = ptr[0]
+        if(choice == "exit"):
+            scene.exit(False)
+            sys.exit(0)
+        else:
+            choice = int(choice)
+        if(choice == 1):
+            scene.new("The least important words are :\n" + ", ".join(least_important_words()))
+        elif(choice == 2):
+            scene.new("The words with the highest scores are :\n" + ", ".join(highest_score()))
+        elif(choice == 3):
+            ptr[0] = ""
+            scene.new("Which president do you want the list of?")
+            scene.handle(ptr)
+            if(ptr[0].lower() in [n.lower() for n in PRESIDENTS]):
+                scene.new("The list is :\n" + ", ".join(most_repeated_word(ptr[0])))
+            else:
+                scene.new("I don't know this president. Please try again.", error=1)
+        elif(choice == 4):
+            scene.new("Which word should we take?")
+            scene.handle(ptr)
+            if(ptr[0].lower() in words):
+                scene.new(f"The presidents that talked about {ptr[0]} are " + ", ".join(who_spoke_of(ptr[0])[0]))
+            else:
+                scene.new('None of the presidents ever talked about it', error=1)
+        elif(choice == 5):
+            scene.new("What is the first word?")
+            scene.handle(ptr)
+            w1 = ptr[0].lower()
+            if(w1 not in words):
+                scene.new('None of the presidents ever talked about it', error=1)
+                continue
+            scene.new("What is the second word?")
+            scene.handle(ptr)
+            w2 = ptr[0].lower()
+            if(w2 not in words):
+                scene.new('None of the presidents ever talked about it', error=1)
+                continue
+            scene.new("What is the operation? Should be either 'and' or 'or'")
+            scene.handle(ptr)
+            op = ptr[0].lower()
+            if(not op in ["and", "or"]):
+                scene.new("This operation is unknown", error=1)
+                continue
+            res = who_spoke_first([w1, w2], op)
+            if(res):
+                scene.new(f"The first president to talk about {w1} {op} {w2} is {res}")
+            else:
+                scene.new(f"None of the presidents ever talked about {w1} {op} {w2}")
+        elif(choice == 6):
+            scene.new("The words said by all are :\n" + ", ".join(words_said_by_all()))
+        else:
+            scene.new("Unknown feature, please try again", error=1)
+            
+        scene.new("Which feature would you like to test?")

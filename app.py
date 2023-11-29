@@ -159,9 +159,8 @@ if(__name__ == "__main__"):
         sys.exit(0)
     
     signal.signal(signal.SIGINT, exit_handler)
+    signal.signal(signal.SIGWINCH, scene.update)
 
-
-    ptr = []
     scene.new("Hi!")
     scene.new("Type 'exit' or hit CTRL+C at any time to exit gracefully")
     scene.new("Which feature would you like to test today?")
@@ -173,8 +172,7 @@ if(__name__ == "__main__"):
         "5. First president to talk about two words based on a set operation\n"
         "6. List of words said by all presidents\n")
     while True:
-        scene.handle(ptr)
-        choice = ptr[0]
+        choice = scene.handle()
         if(choice == "exit"):
             scene.exit(False)
             sys.exit(0)
@@ -188,36 +186,35 @@ if(__name__ == "__main__"):
         elif(choice == 2):
             scene.new("The words with the highest scores are :\n" + ", ".join(highest_score()))
         elif(choice == 3):
-            ptr[0] = ""
             scene.new("Which president do you want the list of?")
-            scene.handle(ptr)
-            if(ptr[0].lower() in [n.lower() for n in PRESIDENTS]):
-                scene.new("The list is :\n" + ", ".join(most_repeated_word(ptr[0])))
+            x = scene.handle()
+            if(x.lower() in [n.lower() for n in PRESIDENTS]):
+                scene.new("The list is :\n" + ", ".join(most_repeated_word(x)))
             else:
                 scene.new("I don't know this president. Please try again.", error=1)
         elif(choice == 4):
             scene.new("Which word should we take?")
-            scene.handle(ptr)
-            if(ptr[0].lower() in words):
-                scene.new(f"The presidents that talked about {ptr[0]} are " + ", ".join(who_spoke_of(ptr[0])[0]))
+            x = scene.handle()
+            if(x.lower() in words):
+                scene.new(f"The presidents that talked about {x} are " + ", ".join(who_spoke_of(x)[0]))
             else:
                 scene.new('None of the presidents ever talked about it', error=1)
         elif(choice == 5):
             scene.new("What is the first word?")
-            scene.handle(ptr)
-            w1 = ptr[0].lower()
+            x = scene.handle()
+            w1 = x.lower()
             if(w1 not in words):
                 scene.new('None of the presidents ever talked about it', error=1)
                 continue
             scene.new("What is the second word?")
-            scene.handle(ptr)
-            w2 = ptr[0].lower()
+            x = scene.handle()
+            w2 = x.lower()
             if(w2 not in words):
                 scene.new('None of the presidents ever talked about it', error=1)
                 continue
             scene.new("What is the operation? Should be either 'and' or 'or'")
-            scene.handle(ptr)
-            op = ptr[0].lower()
+            x = scene.handle()
+            op = x.lower()
             if(not op in ["and", "or"]):
                 scene.new("This operation is unknown", error=1)
                 continue

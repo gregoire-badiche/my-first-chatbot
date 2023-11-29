@@ -148,18 +148,21 @@ def words_said_by_all():
 
 if(__name__ == "__main__"):
     import signal
-    # Used for sys.extit()
-    import sys
+    # Used for exit()
+    from sys import exit
+    
+    from platform import system
 
     scene = Scene()
 
     def exit_handler(sig, frame):
         signal.signal(sig, signal.SIG_IGN) # ignore additional signals
         scene.exit()
-        sys.exit(0)
+        exit(0)
     
     signal.signal(signal.SIGINT, exit_handler)
-    signal.signal(signal.SIGWINCH, scene.update)
+    if(system() != "Windows"):
+        signal.signal(signal.SIGWINCH, scene.update)
 
     scene.new("Hi!")
     scene.new("Type 'exit' or hit CTRL+C at any time to exit gracefully")
@@ -174,8 +177,8 @@ if(__name__ == "__main__"):
     while True:
         choice = scene.handle()
         if(choice == "exit"):
-            scene.exit(False)
-            sys.exit(0)
+            scene.exit()
+            exit(0)
         else:
             try:
                 choice = int(choice)

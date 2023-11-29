@@ -1,4 +1,5 @@
 from os import get_terminal_size
+from threading import Thread
 
 ESC = "\u001b["
 
@@ -34,6 +35,9 @@ def resetcolors():
     setcode("39m")
     setcode("49m")
 
+def clear():
+    write("\033c")
+
 class Bubble:
     def __init__(self, width:int, orientation:bool, text:str = "", error:bool = 0) -> None:
         self.width = width
@@ -52,6 +56,7 @@ class Bubble:
         else:
             w = max([len(l.strip()) for l in self.parsedtext]) + 2
         pad = " " * padding if not(self.orientation) else " " * (consolewidth - w - padding - 2)
+        setcode("G")
         c()
         write(pad + "╭")
         write("─" * w)
@@ -81,6 +86,7 @@ class Bubble:
         write('\n')
     
     def parse(self) -> None:
+        self.parsedtext = []
         width = self.width - 4 # Removes border and padding
         phrases = self.text.split('\n')
         for phrase in phrases:
@@ -124,8 +130,10 @@ class Scene:
         self.consolewidth = get_terminal_size()[0]
         self.width = int(self.consolewidth * 2 / 3)
         self.padding = 3
+        clear()
     
-    def update(self, width:int = 0) -> None:
+    def update(self, *args, width:int = 0) -> None:
+        clear()
         self.consolewidth = get_terminal_size()[0]
         self.width = width or int(self.consolewidth * 2 / 3)
 
@@ -136,18 +144,15 @@ class Scene:
         self.bubbles.append(Bubble(self.width, orientation, text, error))
         self.bubbles[-1].draw(self.padding, self.consolewidth)
     
-    def handle(self, pointer:list) -> None:
+    def handle(self) -> None:
         write("> ")
         txt = input()
         for _ in range(len(txt) // self.consolewidth + 1):
             write(f"{ESC}1A")
             write(f"{ESC}2K")
         self.new(txt, 1)
-        if(len(pointer) == 0):
-            pointer.append(txt)
-        else:
-            pointer[0] = txt
+        return txt
     
     def exit(self, is_error=True):
-        if(is_error): write("\n")
+        # if(is_error): write("\n")
         self.new("Bye!")

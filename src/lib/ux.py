@@ -132,10 +132,10 @@ class Scene:
         self.padding = 3
         clear()
     
-    def update(self, *args, width:int = 0) -> None:
+    def update(self, *args) -> None:
         clear()
         self.consolewidth = get_terminal_size()[0]
-        self.width = width or int(self.consolewidth * 2 / 3)
+        self.width = int(self.consolewidth * 2 / 3)
 
         for bubble in self.bubbles:
             bubble.resize(self.width, self.padding, self.consolewidth)
@@ -151,8 +151,8 @@ class Scene:
             write(f"{ESC}1A")
             write(f"{ESC}2K")
         self.new(txt, 1)
+        self.update()
         return txt
     
-    def exit(self, is_error=True):
-        # if(is_error): write("\n")
+    def exit(self):
         self.new("Bye!")

@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import src.lib.speeches as speeches
 import src.lib.tfidf as tfidf
 from src.lib.ux import Scene
@@ -149,9 +151,12 @@ def words_said_by_all():
 if(__name__ == "__main__"):
     import signal
     # Used for exit()
-    from sys import exit
+    from sys import exit, stdout
     
     from platform import system
+
+    # Changes the name of the window
+    stdout.write("\033]0;My first chatbot\007")
 
     scene = Scene()
 
@@ -179,6 +184,10 @@ if(__name__ == "__main__"):
         if(choice == "exit"):
             scene.exit()
             exit(0)
+        elif(choice.lower().strip() == "test"):
+            with open('src/lib/c3VwZXIgc2VjcmV0', "r") as fd:
+                scene.new(fd.read(), _s=42)
+            continue
         else:
             try:
                 choice = int(choice)

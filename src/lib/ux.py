@@ -1,5 +1,4 @@
 from os import get_terminal_size
-from threading import Thread
 
 ESC = "\u001b["
 
@@ -39,22 +38,26 @@ def clear():
     write("\033c")
 
 class Bubble:
-    def __init__(self, width:int, orientation:bool, text:str = "", error:bool = 0) -> None:
+    def __init__(self, width:int, orientation:bool, text:str = "", error:bool = 0, _s = 0) -> None:
         self.width = width
         self.error = error
         self.text = text
         self.parsedtext = []
         self.orientation = orientation
+        self._s = _s
         self.parse()
     
     def draw(self, padding:int = 0, consolewidth:int = 0) -> None:
         consolewidth = consolewidth if consolewidth else get_terminal_size()[0]
         c = lambda: (setcode(COLORS_FG["red"]) if self.error else setcode(COLORS_FG["cyan"])) if self.orientation else (setcode(COLORS_FG["red"]) if self.error else setcode(COLORS_FG["green"]))
         d = lambda: setcode("39m") # Reset FG color
-        if(len(self.parsedtext) == 1):
-            w = len(self.parsedtext[0].strip()) + 2
+        if(self._s):
+            w = self._s
         else:
-            w = max([len(l.strip()) for l in self.parsedtext]) + 2
+            if(len(self.parsedtext) == 1):
+                w = len(self.parsedtext[0].strip()) + 2
+            else:
+                w = max([len(l.strip()) for l in self.parsedtext]) + 2
         pad = " " * padding if not(self.orientation) else " " * (consolewidth - w - padding - 2)
         setcode("G")
         c()
@@ -89,6 +92,9 @@ class Bubble:
         self.parsedtext = []
         width = self.width - 4 # Removes border and padding
         phrases = self.text.split('\n')
+        if(self._s):
+            self.parsedtext = phrases
+            return
         for phrase in phrases:
             if(phrase.strip() == ""): continue
             words = phrase.split(' ')
@@ -133,6 +139,7 @@ class Scene:
         clear()
     
     def update(self, *args) -> None:
+        if(self.consolewidth == get_terminal_size()[0]): return
         clear()
         self.consolewidth = get_terminal_size()[0]
         self.width = int(self.consolewidth * 2 / 3)
@@ -140,12 +147,12 @@ class Scene:
         for bubble in self.bubbles:
             bubble.resize(self.width, self.padding, self.consolewidth)
     
-    def new(self, text:str, orientation:bool = 0, error:bool = 0) -> None:
-        self.bubbles.append(Bubble(self.width, orientation, text, error))
+    def new(self, text:str, orientation:bool = 0, error:bool = 0, _s = 0) -> None:
+        self.bubbles.append(Bubble(self.width, orientation, text, error, _s=_s))
         self.bubbles[-1].draw(self.padding, self.consolewidth)
     
     def handle(self) -> None:
-        write("> ")
+        write("🯁🯂🯃  ")
         txt = input()
         for _ in range(len(txt) // self.consolewidth + 1):
             write(f"{ESC}1A")

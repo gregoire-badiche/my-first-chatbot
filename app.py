@@ -3,7 +3,7 @@
 import src.lib.speeches as speeches
 import src.lib.tfidf as tfidf
 from src.lib.ux import Scene
-from src.lib.utils import ROOT, PRESIDENTS, list_files
+from src.lib.utils import ROOT, PRESIDENTS, list_files, lower
 import os 
 
 (scores, words, files) = tfidf.tf_idf_score(f"{ROOT}/cleaned")
@@ -53,14 +53,14 @@ def highest_score() -> list[str]:
 def most_repeated_word(name: str) -> list[str]:
     """Returns a list containing all the most repeated words"""
 
-    name = name.lower()
+    name = lower(name)
 
     # To get the most repeated word of a president, we can take all of his speeches, 
     # merge them all together and compute word frequency on the given text
 
     files = list_files(f"{ROOT}/cleaned", ".txt")
     # All the speeches of the given president, as his name should be in the files names
-    filtered_files = [f for f in files if name in f.lower()]
+    filtered_files = [f for f in files if name in lower(f)]
     # The big merged text
     text = ""
     # We read and merge all texts
@@ -87,7 +87,7 @@ def who_spoke_of(word: str) -> tuple[set[str], str]:
     """Gives the set of president who spoke of a given word, and the one who talk about it the most"""
 
     files = list_files(f"{ROOT}/cleaned", ".txt")
-    word = word.lower()
+    word = lower(word)
     plus = 0
     presidentplus = []
     presidents = set()
@@ -150,10 +150,13 @@ def words_said_by_all():
     return res
 
 if(__name__ == "__main__"):
+    # Used to detect CTRL+C hit and terminal resize in UNIX
     import signal
     # Used for exit()
     from sys import exit, stdout
-    
+    # Used to detect which platform is used to ensure compatibility on Windows
+    # as signal.SIGWINCH doesn't exists on Windows, and we must set the
+    # terminal encoding with `chcp 65001`
     from platform import system
 
     # Changes the name of the window
@@ -188,9 +191,10 @@ if(__name__ == "__main__"):
         if(choice == "exit"):
             scene.exit()
             exit(0)
-        elif(choice.lower().strip() == "test"):
+        elif(lower(choice).strip() == "test"):
             with open('src/lib/c3VwZXIgc2VjcmV0', "r", encoding="utf8") as fd:
                 scene.new(fd.read(), _s=42)
+            scene.new("schtroumpf chat")
             continue
         else:
             try:
@@ -204,33 +208,33 @@ if(__name__ == "__main__"):
         elif(choice == 3):
             scene.new("Which president do you want the list of?")
             x = scene.handle()
-            if(x.lower() in [n.lower() for n in PRESIDENTS]):
+            if(lower(x) in [lower(n) for n in PRESIDENTS]):
                 scene.new("The list is :\n" + ", ".join(most_repeated_word(x)))
             else:
                 scene.new("I don't know this president. Please try again.", error=1)
         elif(choice == 4):
             scene.new("Which word should we take?")
             x = scene.handle()
-            if(x.lower() in words):
+            if(lower(x) in words):
                 scene.new(f"The presidents that talked about {x} are " + ", ".join(who_spoke_of(x)[0]))
             else:
                 scene.new('None of the presidents ever talked about it', error=1)
         elif(choice == 5):
             scene.new("What is the first word?")
             x = scene.handle()
-            w1 = x.lower()
+            w1 = lower(x)
             if(w1 not in words):
                 scene.new('None of the presidents ever talked about it', error=1)
                 continue
             scene.new("What is the second word?")
             x = scene.handle()
-            w2 = x.lower()
+            w2 = lower(x)
             if(w2 not in words):
                 scene.new('None of the presidents ever talked about it', error=1)
                 continue
             scene.new("What is the operation? Should be either 'and' or 'or'")
             x = scene.handle()
-            op = x.lower()
+            op = lower(x)
             if(not op in ["and", "or"]):
                 scene.new("This operation is unknown", error=1)
                 continue

@@ -1,8 +1,8 @@
-#################################################
-#                                               #
-#  speeches.py - Librairy used to handle texts  #
-#                                               #
-#################################################
+################################################
+#                                              #
+#  speeches.py - Library used to handle texts  #
+#                                              #
+################################################
 
 # re for RegEx
 import os, re
@@ -12,9 +12,9 @@ from shutil import rmtree as remove_folder
 
 # Wrapper used to call the librairy as a main program
 if(__name__ == "__main__"):
-    from utils import ROOT
+    from utils import ROOT, NAMES_PAIRS, LOWERCASE_LETTERS, lower
 else:
-    from src.lib.utils import ROOT
+    from src.lib.utils import ROOT, NAMES_PAIRS, LOWERCASE_LETTERS, lower
 
 def get_name(file_name: str) -> str:
     """Extracts the President's name from the file name"""
@@ -39,16 +39,6 @@ def get_name(file_name: str) -> str:
 def display_names(names: list[str]) -> None:
     """Displays the names of the presidents"""
 
-    # The pairs used to associate a firstname with a name
-    NAMES_PAIRS = {
-        "Chirac": "Jacques",
-        "Giscard dEstaing": "Valéry",
-        "Hollande": "François",
-        "Mitterrand": "François",
-        "Macron": "Emmanuel",
-        "Sarkozy": "Nicolas",
-    }
-
     # For every names in the list
     for n in names:
         # Pretty cool format, uh ?
@@ -58,13 +48,10 @@ def display_names(names: list[str]) -> None:
 def clean_text(text: str) -> str:
     """Cleans the text by lowercasing it and replacing any non-latin character or punctuation mark with spaces"""
 
-    # The list of characters that we want to keep. Any character that is not in it will be replaced by spaces
-    LOWERCASE_LETTERS = "abcdefghijklmnopqrstuvwxyzüéâäåàçêëèïîìôöòûùÿáíóúñ"
-
     # The string to be returned
     cleaned_text = ""
     # The lowered text
-    l_text = text.lower()
+    l_text = lower(text)
 
     # For every character in the lowered text
     for character in l_text:

@@ -1,3 +1,13 @@
+#######################################################
+#                                                     #
+#  ux.py - Library used to have a nice responsive UX  #
+#         with bubble, image printing, colors         #
+#                                                     #
+#######################################################
+
+# sources : Wikipedia (https://en.wikipedia.org/wiki/ANSI_escape_code)
+#           My big brain 🧠 🧠 🧠
+
 from os import get_terminal_size
 
 ESC = "\u001b["

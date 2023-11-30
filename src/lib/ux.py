@@ -152,7 +152,7 @@ class Scene:
         self.bubbles[-1].draw(self.padding, self.consolewidth)
     
     def handle(self) -> None:
-        write("🯁🯂🯃  ")
+        write("> ")
         txt = input()
         for _ in range(len(txt) // self.consolewidth + 1):
             write(f"{ESC}1A")

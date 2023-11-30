@@ -4,6 +4,7 @@ import src.lib.speeches as speeches
 import src.lib.tfidf as tfidf
 from src.lib.ux import Scene
 from src.lib.utils import ROOT, PRESIDENTS, list_files
+import os 
 
 (scores, words, files) = tfidf.tf_idf_score(f"{ROOT}/cleaned")
 
@@ -168,6 +169,9 @@ if(__name__ == "__main__"):
     signal.signal(signal.SIGINT, exit_handler)
     if(system() != "Windows"):
         signal.signal(signal.SIGWINCH, scene.update)
+    else:
+        os.system("chcp 65001")
+
 
     scene.new("Hi!")
     scene.new("Type 'exit' or hit CTRL+C at any time to exit gracefully")
@@ -185,7 +189,7 @@ if(__name__ == "__main__"):
             scene.exit()
             exit(0)
         elif(choice.lower().strip() == "test"):
-            with open('src/lib/c3VwZXIgc2VjcmV0', "r") as fd:
+            with open('src/lib/c3VwZXIgc2VjcmV0', "r", encoding="utf8") as fd:
                 scene.new(fd.read(), _s=42)
             continue
         else:

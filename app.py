@@ -75,6 +75,8 @@ def most_repeated_word(name: str) -> list[str]:
     highest = 0
     res = []
     for k in frequencies.keys():
+        # Excludes unimportants words
+        if(sum(scores[words.index(k)]) == 0): continue
         if(frequencies[k] == highest):
             res.append(k)
         if(frequencies[k] > highest):

@@ -102,6 +102,7 @@ class Bubble:
         self.parsedtext = []
         width = self.width - 4 # Removes border and padding
         phrases = self.text.split('\n')
+        # If special (e.g an image), we don't parse it
         if(self._s):
             self.parsedtext = phrases
             return

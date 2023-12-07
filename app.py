@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from src.lib.features import *
 from src.lib.ux import Scene
 import os

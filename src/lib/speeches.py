@@ -14,7 +14,7 @@ from shutil import rmtree as remove_folder
 if(__name__ == "__main__"):
     from utils import ROOT, NAMES_PAIRS, LOWERCASE_LETTERS, lower
 else:
-    from src.lib.utils import ROOT, NAMES_PAIRS, LOWERCASE_LETTERS, lower
+    from src.lib.utils import NAMES_PAIRS, LOWERCASE_LETTERS, lower
 
 def get_name(file_name: str) -> str:
     """Extracts the President's name from the file name"""
@@ -71,12 +71,12 @@ def clean_text(text: str) -> str:
 
     return cleaned_text
 
-def convert_texts(files: list[str]) -> None:
-    """Cleans the texts and stores them into the `src/cleaned` directory"""
+def convert_texts(files: list[str], root: str) -> None:
+    """Cleans the texts and stores them into the `root/cleaned` directory"""
 
     # The directory at which the files should be stored
     # Not the cleanest way of doing it, but adding parameters is useless here
-    directory = f"{ROOT}/cleaned"
+    directory = f"{root}/cleaned"
 
     # If the cleaned directory exists, removes it and all its content
     if os.path.exists(directory):
@@ -87,13 +87,16 @@ def convert_texts(files: list[str]) -> None:
     # For every file that should be cleaned (t stands for text)
     for t in files:
         # Opens and cleans the text
-        with open(f"{ROOT}/speeches/{t}", "r") as f_read:
+        with open(f"{root}/speeches/{t}", "r") as f_read:
             text = f_read.read()
             cleaned = clean_text(text)
 
             # And then writes it into a new file
-            with open(f"{ROOT}/cleaned/{t}", "w") as f_write:
+            with open(f"{root}/cleaned/{t}", "w") as f_write:
                 f_write.write(cleaned)
+
+def tokenize(text:str) -> list[str]:
+    return clean_text(text).split(' ')
 
 # If the module is executed as a script, we automatically clean the texts
 if(__name__ == "__main__"):

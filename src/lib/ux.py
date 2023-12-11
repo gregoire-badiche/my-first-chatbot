@@ -162,7 +162,7 @@ class Scene:
         self.bubbles.append(Bubble(self.width, orientation, text, error, _s=_s))
         self.bubbles[-1].draw(self.padding, self.consolewidth)
     
-    def handle(self) -> None:
+    def handle(self) -> str:
         write("> ")
         txt = input()
         for _ in range(len(txt) // self.consolewidth + 1):

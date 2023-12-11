@@ -29,6 +29,9 @@ if(system() != "Windows"):
 else:
     os.system("chcp 65001")
 
+root = 'src/cleaned'
+matrix = tfidf.tf_idf_from_dir(root)
+words = matrix.words()
 
 scene.new("Hi!")
 scene.new("Type 'exit' or hit CTRL+C at any time to exit gracefully")
@@ -40,6 +43,9 @@ scene.new(
     "4. Get the list of president who spoke of a given word\n"
     "5. First president to talk about two words based on a set operation\n"
     "6. List of words said by all presidents\n")
+
+
+
 while True:
     choice = scene.handle()
     if(choice == "exit"):
@@ -56,21 +62,21 @@ while True:
         except:
             choice = 7
     if(choice == 1):
-        scene.new("The least important words are :\n" + ", ".join(least_important_words()))
+        scene.new("The least important words are :\n" + ", ".join(least_important_words(matrix)))
     elif(choice == 2):
-        scene.new("The words with the highest scores are :\n" + ", ".join(highest_score()))
+        scene.new("The words with the highest scores are :\n" + ", ".join(highest_score(matrix)))
     elif(choice == 3):
         scene.new("Which president do you want the list of?")
         x = scene.handle()
         if(lower(x) in [lower(n) for n in PRESIDENTS]):
-            scene.new("The list is :\n" + ", ".join(most_repeated_word(x)))
+            scene.new("The list is :\n" + ", ".join(most_repeated_word(x, matrix, root)))
         else:
             scene.new("I don't know this president. Please try again.", error=1)
     elif(choice == 4):
         scene.new("Which word should we take?")
         x = scene.handle()
         if(lower(x) in words):
-            scene.new(f"The presidents that talked about {x} are " + ", ".join(who_spoke_of(x)[0]))
+            scene.new(f"The presidents that talked about '{x}' are " + ", ".join(who_spoke_of(x, root)[0]))
         else:
             scene.new('None of the presidents ever talked about it', error=1)
     elif(choice == 5):
@@ -92,13 +98,13 @@ while True:
         if(not op in ["and", "or"]):
             scene.new("This operation is unknown", error=1)
             continue
-        res = who_spoke_first([w1, w2], op)
+        res = who_spoke_first([w1, w2], op, root)
         if(res):
             scene.new(f"The first president to talk about {w1} {op} {w2} is {res}")
         else:
             scene.new(f"None of the presidents ever talked about {w1} {op} {w2}")
     elif(choice == 6):
-        scene.new("The words said by all are :\n" + ", ".join(words_said_by_all()))
+        scene.new("The words said by all are :\n" + ", ".join(words_said_by_all(matrix)))
     else:
         scene.new("Unknown feature, please try again", error=1)
         

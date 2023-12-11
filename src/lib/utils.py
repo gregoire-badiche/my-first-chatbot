@@ -5,6 +5,7 @@
 #############################################
 
 import os
+from math import sqrt
 
 # the `src` directory
 ROOT = f"{os.path.dirname(os.path.realpath(__file__))}/.."
@@ -51,3 +52,33 @@ def lower(text:str) -> str:
         else:
             res += char
     return res
+
+class TF_IDF_Matrix:
+    def __init__(self, scores:dict[dict[int]]) -> None:
+        self.scores:dict[dict[int]] = scores
+    
+    def matrix(self):
+        s = self.scores
+        res = [[k for k in s[j]] for j in s]
+        return res
+
+    def words(self):
+        return list(self.scores.keys())
+    
+    def files(self):
+        return list(self.scores[self.words()[0]].keys())
+
+    def getword(self, word) -> dict:
+        if(not word in self.words()): raise IndexError()
+        return self.scores[word]
+
+    def getfile(self, file):
+        if(not file in self.files()): raise IndexError()
+        res = {}
+        for k in self.words():
+            res[k] = self.scores[k]
+        return res
+    
+    def reverse(self) -> dict[str, dict]:
+        res = {k: {j: self.scores[k][j] for j in self.scores[k]} for k in self.scores}
+        return res

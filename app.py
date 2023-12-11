@@ -114,9 +114,9 @@ def get_response(text:str) -> str:
     if(mrd == 0):
         return False
     else:
-        hs = ""
-        m = 0
-        s = text_mat.scores
+        hs = "" # highest score index
+        m = 0 # max
+        s = text_mat.scores # scores
         for i in s:
             if(s[i][0] > m):
                 m = s[i][0]
@@ -141,5 +141,3 @@ while True:
             scene.new(x)
         else:
             scene.new("Je n'ai pas compris. Pouvez-vous reformuler ?", error=True)
-        
-    scene.new("Which feature would you like to test?")

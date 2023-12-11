@@ -36,6 +36,6 @@ def most_relevant_document(matrix:TF_IDF_Matrix, vector:list[int], document_name
 
 def get_phrase(word:str, raw_text:str) -> str:
     phrases = raw_text.split('.')
-    phrases = [clean_text(p) for p in phrases]
-    phrase = [p for p in phrases if word in p][0]
-    return phrase
+    phrases_cleaned = [clean_text(p) for p in phrases]
+    res = [phrases[i] for i in range(len(phrases)) if word in phrases_cleaned[i].split(' ')][0]
+    return res

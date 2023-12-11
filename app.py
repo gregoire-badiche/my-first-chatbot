@@ -4,19 +4,20 @@ from src.lib.features import *
 from src.lib.response import *
 import src.lib.speeches as speeches
 from src.lib.ux import Scene
-import os
 
-# Used to detect CTRL+C hit and terminal resize in UNIX
+# Used to change character encoding on Windows
+import os
+# Used to detect CTRL+C hit, and terminal resize in UNIX
 import signal
 # Used for exit()
-from sys import exit, stdout
+from sys import exit
 # Used to detect which platform is used to ensure compatibility on Windows
 # as signal.SIGWINCH doesn't exists on Windows, and we must set the
 # terminal encoding with `chcp 65001`
 from platform import system
 
 # Changes the name of the window
-stdout.write("\033]0;My first chatbot\007")
+print("\033]0;My first chatbot\007", end="")
 
 scene = Scene()
 

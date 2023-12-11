@@ -80,5 +80,9 @@ class TF_IDF_Matrix:
         return res
     
     def reverse(self) -> dict[str, dict]:
-        res = {k: {j: self.scores[k][j] for j in self.scores[k]} for k in self.scores}
+        m = self.matrix()
+        res = [[] for i in range(len(m[0]))]
+        for i in range(len(m)):
+            for j in range(len(m[i])):
+                res[j].append(m[i][j])
         return res

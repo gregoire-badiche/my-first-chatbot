@@ -17,19 +17,22 @@ def vector_norm(vector: list[int]):
     return sqrt(s)
 
 def similarity(vector1:list[int], vector2:list[int]) -> int:
-    return scalar_product(vector1, vector2) / (vector_norm(vector1) * vector_norm(vector2))
+    p1 = scalar_product(vector1, vector2)
+    p2 = (vector_norm(vector1) * vector_norm(vector2))
+    if(p2 == 0): return 0
+    return p1 / p2
 
-def most_relevant_document(matrix:TF_IDF_Matrix, vector:list[int]) -> str:
+def most_relevant_document(matrix:TF_IDF_Matrix, vector:list[int], document_names) -> str:
     m = matrix.reverse()
     maxs = 0
     doc = ""
-    for file in m:
-        if(not doc): doc = file
+    for i in range(len(m)):
+        file = m[i]
         v = similarity(file, vector)
         if(v > maxs):
             maxs = v
-            doc = file
-    return doc
+            doc = document_names[i]
+    return doc if maxs != 0 else 0
 
 def get_phrase(word:str, raw_text:str) -> str:
     phrases = raw_text.split('.')

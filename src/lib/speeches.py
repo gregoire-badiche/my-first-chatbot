@@ -65,6 +65,7 @@ def clean_text(text: str) -> str:
                 if(cleaned_text[-1] != " "):
                     cleaned_text += " "
     
+    if(len(cleaned_text) == 0): return cleaned_text
     # Removes trailing space if it exists
     if(cleaned_text[-1] == " "):
         cleaned_text = cleaned_text[:-1]

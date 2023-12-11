@@ -66,17 +66,18 @@ def inverse_document_frequency(directory: str) -> dict[str: float]:
     
     return res
 
-def tf_idf_score(tf_vector:dict[int], idf_vector:dict[int]) -> dict[int]:
-    mat = {k:0 for k in idf_vector.keys()}
+def tf_idf_score(tf_vector:dict[int], idf_vector:dict[int]) -> TF_IDF_Matrix:
+    mat = {k:[0] for k in idf_vector.keys()}
     for word in tf_vector.keys():
-        mat[word] = tf_vector[word] * idf_vector[word]
-    return mat
+        if(word not in idf_vector.keys()): continue
+        mat[word] = [tf_vector[word] * idf_vector[word]]
+    return TF_IDF_Matrix(mat)
 
-def tf_idf_from_dir(directory: str) -> TF_IDF_Matrix: 
+def tf_idf_from_dir(directory: str) -> tuple[TF_IDF_Matrix, list]: 
     """Computes the TF-IDF score"""
 
     # Gets the idf dictionnary
-    itf = inverse_document_frequency(directory)
+    idf = inverse_document_frequency(directory)
     files = list_files(directory, '.txt')
 
     # Initialization of the scores dictionnary, with each word of the document bein associated a value of 0
@@ -93,7 +94,7 @@ def tf_idf_from_dir(directory: str) -> TF_IDF_Matrix:
     #   "word_2": [0, 0, 0, ...],
     #    ...
     # }
-    scores = { k: [0] * len(files) for k in itf.keys() }
+    scores = { k: [0] * len(files) for k in idf.keys() }
 
     # For every speech file
     for i in range(len(files)):
@@ -107,10 +108,10 @@ def tf_idf_from_dir(directory: str) -> TF_IDF_Matrix:
         # Then computes the TF-IDF score for every word of the text, and writes it into the variable
         # For every word of the text
         for k in frequencies.keys():
-            scores[k][i] = frequencies[k] * itf[k]
+            scores[k][i] = frequencies[k] * idf[k]
 
     # Returns the matrix as a TF_IDF_Matrix object
-    return TF_IDF_Matrix(scores)
+    return TF_IDF_Matrix(scores), idf
 
 # If the module is called as a program
 if(__name__ == "__main__"):

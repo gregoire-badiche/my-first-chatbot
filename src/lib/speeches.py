@@ -104,7 +104,7 @@ if(__name__ == "__main__"):
     import sys
     from utils import list_files
     files = list_files(f"{ROOT}/speeches", 'txt')
-    convert_texts(files)
+    convert_texts(files, ROOT)
     print("Cleaned speeches")
     # I use zsh, and get triggered when the program don't exits with code 0
     sys.exit(0)

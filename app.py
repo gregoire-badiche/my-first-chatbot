@@ -113,7 +113,7 @@ def get_response(text:str) -> str:
     text_mat = tfidf.tf_idf_score(text_vec, idf)
     mrd = most_relevant_document(matrix, text_mat.reverse()[0], list_files(root, ".txt"))
     if(mrd == 0):
-        return False
+        return 0
     else:
         hs = "" # highest score index
         m = 0 # max
@@ -124,7 +124,10 @@ def get_response(text:str) -> str:
                 hs = i
         with open(f"{root}/../speeches/{mrd}") as fd:
             phrase = get_phrase(hs, fd.read())
-        return phrase
+        if(phrase):
+            return phrase
+        else:
+            return 1
 
 while True:
     inpt = scene.handle()
@@ -138,7 +141,10 @@ while True:
     
     else:
         x = get_response(inpt)
-        if(x):
+        if(x not in [0, 1]):
             scene.new(x)
         else:
-            scene.new("Je n'ai pas compris. Pouvez-vous reformuler ?", error=True)
+            if(x == 1):
+                scene.new("Je ne peux malheureusement pas répondre à cela pour l'instant.", error=True)
+            else:
+                scene.new("Je n'ai pas compris. Pouvez-vous reformuler ?", error=True)

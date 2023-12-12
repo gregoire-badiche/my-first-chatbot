@@ -122,7 +122,7 @@ def get_response(text:str) -> str:
             if(s[i][0] > m):
                 m = s[i][0]
                 hs = i
-        with open(f"{root}/../speeches/{mrd}") as fd:
+        with open(f"{root}/../speeches/{mrd}", encoding='utf8') as fd:
             phrase = get_phrase(hs, fd.read())
         if(phrase):
             return phrase

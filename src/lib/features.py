@@ -2,18 +2,18 @@
 
 import src.lib.speeches as speeches
 import src.lib.tfidf as tfidf
-from src.lib.utils import ROOT, PRESIDENTS, list_files, lower, TF_IDF_Matrix
+from src.lib.utils import ROOT, PRESIDENTS, list_files, lower, matrix
 
 matrix = tfidf.tf_idf_from_dir(f"{ROOT}/cleaned")
 
 #1
-def least_important_words(scores: TF_IDF_Matrix) -> list[str]:
+def least_important_words(scores: matrix) -> list[str]:
     """Returns a list containing all the words with scores that are all 0"""
 
     # The list to be returned
     res = []
-    s = scores.matrix()
-    words = scores.words()
+    s = scores.matrix
+    words = scores.rows
 
     # For every word in the `scores`` matrix
     for i in range(len(s)):
@@ -25,7 +25,7 @@ def least_important_words(scores: TF_IDF_Matrix) -> list[str]:
     return res
 
 #2
-def highest_score(scores:TF_IDF_Matrix) -> list[str]:
+def highest_score(scores:matrix) -> list[str]:
     """Returns a list containig all the words with the highest TF-IDF score"""
 
     # The list to be returned
@@ -33,8 +33,9 @@ def highest_score(scores:TF_IDF_Matrix) -> list[str]:
     # The max score
     highest = 0
 
-    words = scores.words()
-    scores = scores.matrix()
+    words = scores.rows
+    scores = scores.matrix
+
 
     # For every word in the TF-IDF matrix
     for i in range(len(scores)):
@@ -53,13 +54,13 @@ def highest_score(scores:TF_IDF_Matrix) -> list[str]:
     return list(set(res))
 
 #3
-def most_repeated_word(name:str, scores:TF_IDF_Matrix, root:str) -> list[str]:
+def most_repeated_word(name:str, scores:matrix, root:str) -> list[str]:
     """Returns a list containing all the most repeated words"""
 
     name = lower(name)
 
-    words = scores.words()
-    scores = scores.matrix()
+    words = scores.rows
+    scores = scores.matrix
 
     # To get the most repeated word of a president, we can take all of his speeches, 
     # merge them all together and compute word frequency on the given text
@@ -148,9 +149,9 @@ def who_spoke_first(words:list[str], operation: str, root:str) -> str:
     return first_president
 
 # 6
-def words_said_by_all(scores:TF_IDF_Matrix):
-    words = scores.words()
-    scores = scores.matrix()
+def words_said_by_all(scores:matrix):
+    words = scores.rows
+    scores = scores.matrix
     """Determine the list of words said by all the presidents"""
     res = []
     for i in range(len(scores)):

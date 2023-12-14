@@ -53,36 +53,24 @@ def lower(text:str) -> str:
             res += char
     return res
 
-class TF_IDF_Matrix:
-    def __init__(self, scores:dict[dict[int]]) -> None:
-        self.scores:dict[dict[int]] = scores
-    
-    def matrix(self):
-        s = self.scores
-        res = [[k for k in s[j]] for j in s]
-        return res
+class matrix:
+    matrix:list[list[int]]
+    rows:list[str]
+    cols:list[str]
 
-    def words(self):
-        return list(self.scores.keys())
-    
-    def files(self):
-        return list(self.scores[self.words()[0]].keys())
-
-    def getword(self, word) -> dict:
-        if(not word in self.words()): raise IndexError()
-        return self.scores[word]
-
-    def getfile(self, file):
-        if(not file in self.files()): raise IndexError()
-        res = {}
-        for k in self.words():
-            res[k] = self.scores[k]
-        return res
+    def __init__(self, matrix:list[list[int]], cols:list[str], rows:list[str]) -> None:
+        self.matrix:list[list[int]] = matrix
+        self.rows:list[str] = rows
+        self.cols:list[str] = cols
     
     def reverse(self) -> dict[str, dict]:
-        m = self.matrix()
+        m = self.matrix
         res = [[] for i in range(len(m[0]))]
         for i in range(len(m)):
-            for j in range(len(m[i])):
+            for j in range(len(m[0])):
                 res[j].append(m[i][j])
         return res
+    
+    def dict(self):
+        dict = {self.rows[i]: {self.cols: matrix[i][j] for j in range(len(matrix[i]))} for i in range(len(matrix))}
+        return dict

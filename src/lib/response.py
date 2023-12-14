@@ -1,5 +1,5 @@
 from math import sqrt
-from src.lib.utils import TF_IDF_Matrix
+from src.lib.utils import matrix
 from src.lib.speeches import clean_text
 
 def scalar_product(vector1: list[int], vector2: list[int]) -> int:
@@ -22,8 +22,8 @@ def similarity(vector1:list[int], vector2:list[int]) -> int:
     if(p2 == 0): return 0
     return p1 / p2
 
-def most_relevant_document(matrix:TF_IDF_Matrix, vector:list[int], document_names) -> str:
-    m = matrix.reverse()
+def most_relevant_document(mat:matrix, vector:list[int], document_names) -> str:
+    m = mat.reverse()
     maxs = 0
     doc = ""
     for i in range(len(m)):

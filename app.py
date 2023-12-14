@@ -33,8 +33,8 @@ else:
     os.system("chcp 65001")
 
 root = 'src/cleaned'
-matrix, idf = tfidf.tf_idf_from_dir(root)
-words = matrix.words()
+scores, idf = tfidf.tf_idf_from_dir(root)
+words = scores.rows
 
 scene.new("Hi!")
 scene.new("Type 'exit' or hit CTRL+C at any time to exit gracefully")
@@ -52,7 +52,7 @@ def feature3():
     scene.new("Which president do you want the list of?")
     x = scene.handle()
     if(lower(x) in [lower(n) for n in PRESIDENTS]):
-        scene.new("The list is :\n" + ", ".join(most_repeated_word(x, matrix, root)))
+        scene.new("The list is :\n" + ", ".join(most_repeated_word(x, scores, root)))
     else:
         scene.new("I don't know this president. Please try again.", error=1)
     return
@@ -98,12 +98,12 @@ def featuretest():
     scene.new("schtroumpf chat")
 
 features = {
-    "1": lambda: scene.new("The least important words are :\n" + ", ".join(least_important_words(matrix))),
-    "2": lambda: scene.new("The words with the highest scores are :\n" + ", ".join(highest_score(matrix))),
+    "1": lambda: scene.new("The least important words are :\n" + ", ".join(least_important_words(scores))),
+    "2": lambda: scene.new("The words with the highest scores are :\n" + ", ".join(highest_score(scores))),
     "3": feature3,
     "4": feature4,
     "5": feature5,
-    "6": lambda: scene.new("The words said by all are :\n" + ", ".join(words_said_by_all(matrix))),
+    "6": lambda: scene.new("The words said by all are :\n" + ", ".join(words_said_by_all(scores))),
     "test": featuretest
 }
 
@@ -111,17 +111,17 @@ def get_response(text:str) -> str:
     text = speeches.clean_text(text)
     text_vec = tfidf.term_frequency(text)
     text_mat = tfidf.tf_idf_score(text_vec, idf)
-    mrd = most_relevant_document(matrix, text_mat.reverse()[0], list_files(root, ".txt"))
+    mrd = most_relevant_document(scores, text_mat.reverse()[0], list_files(root, ".txt"))
     if(mrd == 0):
         return 0
     else:
         hs = "" # highest score index
         m = 0 # max
-        s = text_mat.scores # scores
-        for i in s:
+        s = text_mat.matrix # scores
+        for i in range(len(s)):
             if(s[i][0] > m):
                 m = s[i][0]
-                hs = i
+                hs = text_mat.rows[i]
         with open(f"{root}/../speeches/{mrd}", encoding='utf8') as fd:
             phrase = get_phrase(hs, fd.read())
         if(phrase):

@@ -115,22 +115,30 @@ def get_response(text:str) -> str:
     if(mrd == 0):
         return 0
     else:
-        hs = "" # highest score index
-        m = 0 # max
-        s = text_mat.matrix # scores
-        for i in range(len(s)):
-            if(s[i][0] > m):
-                m = s[i][0]
-                hs = text_mat.rows[i]
-        with open(f"{root}/../speeches/{mrd}", encoding='utf8') as fd:
-            phrase = get_phrase(hs, fd.read())
-        if(phrase):
-            return phrase
-        else:
-            return 1
+        isfound = False
+        hsl = [] # highest scores list
+        maxitems = len([i for i in range(len(text_mat.matrix)) if i > 0])
+        while(not isfound):
+            hs = "" # highest score index
+            m = 0 # max
+            s = text_mat.matrix # scores
+            for i in range(len(s)):
+                if(text_mat.rows[i] in hsl): continue
+                if(s[i][0] > m):
+                    m = s[i][0]
+                    hs = text_mat.rows[i]
+            hsl.append(hs)
+            with open(f"{root}/../speeches/{mrd}", encoding='utf8') as fd:
+                phrase = get_phrase(hs, fd.read())
+            if(phrase):
+                return phrase
+            if(len(isfound) == maxitems):
+                isfound = True
+        return 1
 
 while True:
     inpt = scene.handle()
+    if(inpt == ""): continue
     choice = lower(inpt).strip()
     if(choice == "exit"):
         scene.exit()
@@ -145,6 +153,6 @@ while True:
             scene.new(x)
         else:
             if(x == 1):
-                scene.new("Je ne peux malheureusement pas répondre à cela pour l'instant.", error=True)
+                scene.new("Unfortunately, I cannot provide an answer to this at the moment.", error=True)
             else:
-                scene.new("Je n'ai pas compris. Pouvez-vous reformuler ?", error=True)
+                scene.new("I didn't understood. May you rephrase?", error=True)

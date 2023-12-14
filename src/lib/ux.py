@@ -165,6 +165,10 @@ class Scene:
     def handle(self) -> str:
         write("> ")
         txt = input()
+        if(txt == ""):
+            write(f"{ESC}1A")
+            write(f"{ESC}2K")
+            return ""
         for _ in range(len(txt) // self.consolewidth + 1):
             write(f"{ESC}1A")
             write(f"{ESC}2K")

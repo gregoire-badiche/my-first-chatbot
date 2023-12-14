@@ -4,7 +4,11 @@ import src.lib.speeches as speeches
 import src.lib.tfidf as tfidf
 from src.lib.utils import ROOT, PRESIDENTS, list_files, lower, matrix
 
-matrix = tfidf.tf_idf_from_dir(f"{ROOT}/cleaned")
+# matrix = tfidf.tf_idf_from_dir(f"{ROOT}/cleaned")
+
+root = 'src/cleaned'
+scores, idf = tfidf.tf_idf_from_dir(root)
+words = scores.rows
 
 #1
 def least_important_words(scores: matrix) -> list[str]:
@@ -159,3 +163,62 @@ def words_said_by_all(scores:matrix):
         if(sum(scores[i]) == 0):
             res.append(words[i])
     return res
+
+def feature3(scene):
+    scene.new("Which president do you want the list of?")
+    x = scene.handle()
+    if(lower(x) in [lower(n) for n in PRESIDENTS]):
+        scene.new("The list is :\n" + ", ".join(most_repeated_word(x, scores, root)))
+    else:
+        scene.new("I don't know this president. Please try again.", error=1)
+    return
+
+def feature4(scene):
+    scene.new("Which word should we take?")
+    x = scene.handle()
+    if(lower(x) in words):
+        scene.new(f"The presidents that talked about '{x}' are " + ", ".join(who_spoke_of(x, root)[0]))
+    else:
+        scene.new('None of the presidents ever talked about it', error=1)
+    return
+
+def feature5(scene):
+    scene.new("What is the first word?")
+    x = scene.handle()
+    w1 = lower(x)
+    if(w1 not in words):
+        scene.new('None of the presidents ever talked about it', error=1)
+        return
+    scene.new("What is the second word?")
+    x = scene.handle()
+    w2 = lower(x)
+    if(w2 not in words):
+        scene.new('None of the presidents ever talked about it', error=1)
+        return
+    scene.new("What is the operation? Should be either 'and' or 'or'")
+    x = scene.handle()
+    op = lower(x)
+    if(not op in ["and", "or"]):
+        scene.new("This operation is unknown", error=1)
+        return
+    res = who_spoke_first([w1, w2], op, root)
+    if(res):
+        scene.new(f"The first president to talk about {w1} {op} {w2} is {res}")
+    else:
+        scene.new(f"None of the presidents ever talked about {w1} {op} {w2}")
+    return
+
+def featuretest(scene):
+    with open('src/lib/c3VwZXIgc2VjcmV0', "r", encoding="utf8") as fd:
+        scene.new(fd.read(), _s=42)
+    scene.new("schtroumpf chat")
+
+features = {
+    "1": lambda scene: scene.new("The least important words are :\n" + ", ".join(least_important_words(scores))),
+    "2": lambda scene: scene.new("The words with the highest scores are :\n" + ", ".join(highest_score(scores))),
+    "3": feature3,
+    "4": feature4,
+    "5": feature5,
+    "6": lambda scene: scene.new("The words said by all are :\n" + ", ".join(words_said_by_all(scores))),
+    "test": featuretest
+}

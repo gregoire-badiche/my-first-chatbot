@@ -12,9 +12,9 @@ from shutil import rmtree as remove_folder
 
 # Wrapper used to call the librairy as a main program
 if(__name__ == "__main__"):
-    from utils import ROOT, NAMES_PAIRS, LOWERCASE_LETTERS, lower
+    from utils import ROOT, NAMES_PAIRS, LOWERCASE_LETTERS, DIC_UNACCENT, lower
 else:
-    from src.lib.utils import NAMES_PAIRS, LOWERCASE_LETTERS, lower
+    from src.lib.utils import NAMES_PAIRS, LOWERCASE_LETTERS, DIC_UNACCENT, lower
 
 def get_name(file_name: str) -> str:
     """Extracts the President's name from the file name"""
@@ -57,7 +57,7 @@ def clean_text(text: str) -> str:
     for character in l_text:
         # Do we want to keep the character ?
         if(character in LOWERCASE_LETTERS):
-            cleaned_text += character
+            cleaned_text += DIC_UNACCENT[character]
         else:
             # Ensures that the text doesn't starts with a space
             if(len(cleaned_text) != 0):

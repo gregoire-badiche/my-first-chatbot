@@ -36,6 +36,25 @@ UPPERCASE_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZÜÉÂÄÅÀÇÊËÈÏÎÌÔÖÒ�
 # simply the characters with accents, as they are spread in the ASCII table
 DIC_UPPER_LOWER = {UPPERCASE_LETTERS[i]: LOWERCASE_LETTERS[i] for i in range(len(LOWERCASE_LETTERS))}
 
+UNACCENT_K = "abcdefghijklmnopqrstuvwxyzüéâäåàçêëèïîìôöòûùÿáíóúñ"
+UNACCENT_V = "abcdefghijklmnopqrstuvwxyzueaaaaceeeiiiooouuyaioun"
+DIC_UNACCENT = {UNACCENT_K[i]: UNACCENT_V[i] for i in range(len(UNACCENT_K))}
+
+QUESTION_STARTERS = {
+    "comment": "Après analyse, ",
+    "pourquoi": "Car, ",
+    "peux tu": "Oui, bien sûr! Dans les faits, ",
+    "quoi": "En ce qui concerne cela, ",
+    "qui": "En termes de personnes, ",
+    "quel": "Concernant ce choix, ",
+    "est ce que": "Bien entendu, ",
+    "penses tu que": "De mon point de vue, ",
+    "explique": "Pour mieux comprendre, ",
+    "decris": "En détail, ",
+    "imagine": "En imaginant, ",
+    "en quoi consiste": "En ce qui concerne cela, ",
+}
+
 def list_files(directory: str, extension: str) -> list[str]:
     """Lists all the files ending with `extension` in a given directory"""
     files_names = []
@@ -51,6 +70,15 @@ def lower(text:str) -> str:
             res += DIC_UPPER_LOWER[char]
         else:
             res += char
+    return res
+
+def startwith(text:str, word:str) -> bool:
+    if(len(text) < len(word)): return False
+    res = True
+    for i in range(len(word)):
+        if(word[i] != text[i]):
+            res = False
+            break
     return res
 
 class matrix:
@@ -71,6 +99,6 @@ class matrix:
                 res[j].append(m[i][j])
         return res
     
-    def dict(self):
+    def dict(self) -> dict:
         dict = {self.rows[i]: {self.cols: matrix[i][j] for j in range(len(matrix[i]))} for i in range(len(matrix))}
         return dict

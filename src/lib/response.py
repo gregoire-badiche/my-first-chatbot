@@ -1,5 +1,5 @@
 from math import sqrt
-from src.lib.utils import matrix
+from src.lib.utils import matrix, startwith, lower, QUESTION_STARTERS
 from src.lib.speeches import clean_text
 
 def scalar_product(vector1: list[int], vector2: list[int]) -> int:
@@ -42,3 +42,10 @@ def get_phrase(word:str, raw_text:str) -> str:
         return res[0]
     else:
         return False
+
+def pretty_response(question:str, phrase:str) -> str:
+    phrase = phrase.strip() + "."
+    for key in QUESTION_STARTERS:
+        if(startwith(question, key)):
+            phrase = QUESTION_STARTERS[key] + lower(phrase[0]) + phrase[1:]
+    return phrase

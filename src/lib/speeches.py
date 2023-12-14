@@ -72,28 +72,24 @@ def clean_text(text: str) -> str:
 
     return cleaned_text
 
-def convert_texts(files: list[str], root: str) -> None:
+def convert_texts(files:list[str], destination_directory:str, origin_directory:str) -> None:
     """Cleans the texts and stores them into the `root/cleaned` directory"""
 
-    # The directory at which the files should be stored
-    # Not the cleanest way of doing it, but adding parameters is useless here
-    directory = f"{root}/cleaned"
-
     # If the cleaned directory exists, removes it and all its content
-    if os.path.exists(directory):
-        remove_folder(directory)
+    if os.path.exists(destination_directory):
+        remove_folder(destination_directory)
     # And creates a brand new one !
-    os.makedirs(directory)
+    os.makedirs(destination_directory)
 
     # For every file that should be cleaned (t stands for text)
     for t in files:
         # Opens and cleans the text
-        with open(f"{root}/speeches/{t}", "r") as f_read:
+        with open(f"{origin_directory}/{t}", "r") as f_read:
             text = f_read.read()
             cleaned = clean_text(text)
 
             # And then writes it into a new file
-            with open(f"{root}/cleaned/{t}", "w") as f_write:
+            with open(f"{destination_directory}/{t}", "w") as f_write:
                 f_write.write(cleaned)
 
 def tokenize(text:str) -> list[str]:
@@ -103,8 +99,8 @@ def tokenize(text:str) -> list[str]:
 if(__name__ == "__main__"):
     import sys
     from utils import list_files
-    files = list_files(f"{ROOT}/speeches", 'txt')
-    convert_texts(files, ROOT)
+    files = list_files(f"{ROOT}/speeches/presidents", 'txt')
+    convert_texts(files, f"{ROOT}/cleaned/presidents", f"{ROOT}/speeches/presidents")
     print("Cleaned speeches")
     # I use zsh, and get triggered when the program don't exits with code 0
     sys.exit(0)

@@ -34,7 +34,8 @@ if(system() != "Windows"):
 else:
     os.system("chcp 65001")
 
-root = ROOT + '/cleaned'
+currenttheme = "presidents"
+root = ROOT + '/cleaned/' + currenttheme
 scores, idf = tfidf.tf_idf_from_dir(root)
 words = scores.rows
 
@@ -71,7 +72,7 @@ def get_response(text:str) -> str:
                     m = s[i][0]
                     hs = text_mat.rows[i]
             hsl.append(hs)
-            with open(f"{root}/../speeches/{mrd}", encoding='utf8') as fd:
+            with open(f"{ROOT}/speeches/{currenttheme}/{mrd}", encoding='utf8') as fd:
                 phrase = get_phrase(hs, fd.read())
             if(phrase):
                 return phrase
@@ -90,8 +91,30 @@ while True:
     if(choice in features.keys()):
         features[choice](scene)
 
-    elif(choice == "change subject"):
-        pass
+    elif(choice == "change theme"):
+        scene.new(
+            "What do you want to talk about?\n"
+            "1. Speeches by French presidents\n"
+            "2. CLI articles on Wikipedia\n"
+            "3. Climate articles\n"
+        )
+
+        choices = {
+            "1": "presidents",
+            "2": "cli",
+            "3": "climate"
+        }
+
+        c = scene.handle()
+
+        if(not c in choices.keys()):
+            scene.new("This theme isn't valid.", error=True)
+        
+        currenttheme = choices[c]
+        root = ROOT + '/cleaned/' + currenttheme
+        scores, idf = tfidf.tf_idf_from_dir(root)
+        words = scores.rows
+        scene.new(f"Changed theme to {currenttheme}.")
     
     else:
         res = get_response(inpt)

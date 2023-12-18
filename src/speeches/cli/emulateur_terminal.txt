@@ -1,0 +1,5 @@
+Un émulateur de terminal, aussi appelé console virtuelle ou terminal virtuel, est un logiciel qui émule le fonctionnement d'un terminal informatique. L'émulation est généralement faite dans une fenêtre, ce qui permet d'émuler et utiliser plusieurs terminaux sur un seul moniteur d'ordinateur.
+Certains mainframes servent à faire fonctionner des logiciels écrits pour du matériel, et notamment des terminaux, retirés du marché depuis longtemps. La communication avec ces logiciels se fait donc avec un émulateur de terminal.
+L'environnement graphique X Window System, particulièrement utilisé sur Unix, propose en standard un émulateur du terminal DEC VT102 appelé xterm. Ce logiciel, ou un de ses nombreux clones, est l'interface qui permet d'interagir avec les commandes Unix lorsqu'on utilise un environnement graphique.
+Android aussi étant basé sur Unix, plusieurs applications proposent une interface permettant d’exécuter les commandes basées sur celui-ci notamment avec Terminal emulator.
+Le raccourci de lancement de l'émulateur de terminal est généralement <CTRL><Alt><T>.

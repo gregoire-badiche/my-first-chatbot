@@ -4,13 +4,17 @@
 #                                                   #
 #####################################################
 
+# Authors : Grégoire Badiche
+#           Samy Gharnaout
+#           Christine Khazzaka
+
 import math
 
 # Wrapper used to call the librairy as a main program
 if(__name__ == "__main__"):
     from utils import list_files
 else:
-    from src.lib.utils import list_files, TF_IDF_Matrix
+    from src.lib.utils import list_files, matrix
 
 def term_frequency(text: str) -> dict[str, int]:
     """Returns a dictionary associating with each word the number of times it appears in the string"""
@@ -66,14 +70,15 @@ def inverse_document_frequency(directory: str) -> dict[str: float]:
     
     return res
 
-def tf_idf_score(tf_vector:dict[int], idf_vector:dict[int]) -> TF_IDF_Matrix:
+def tf_idf_score(tf_vector:dict[int], idf_vector:dict[int]) -> matrix:
     mat = {k:[0] for k in idf_vector.keys()}
     for word in tf_vector.keys():
         if(word not in idf_vector.keys()): continue
         mat[word] = [tf_vector[word] * idf_vector[word]]
-    return TF_IDF_Matrix(mat)
+    mat = [mat[k] for k in mat.keys()]
+    return matrix(mat, ["1"], list(idf_vector.keys()))
 
-def tf_idf_from_dir(directory: str) -> tuple[TF_IDF_Matrix, list]: 
+def tf_idf_from_dir(directory: str) -> tuple[matrix, list]: 
     """Computes the TF-IDF score"""
 
     # Gets the idf dictionnary
@@ -110,8 +115,11 @@ def tf_idf_from_dir(directory: str) -> tuple[TF_IDF_Matrix, list]:
         for k in frequencies.keys():
             scores[k][i] = frequencies[k] * idf[k]
 
-    # Returns the matrix as a TF_IDF_Matrix object
-    return TF_IDF_Matrix(scores), idf
+    # Transfoms the dict into a matrix
+    res = [scores[i] for i in scores.keys()]
+
+    # Returns the matrix as a matrix object
+    return matrix(res, files, list(idf.keys())), idf
 
 # If the module is called as a program
 if(__name__ == "__main__"):

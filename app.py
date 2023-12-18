@@ -1,9 +1,22 @@
 #!/usr/bin/env python3
+# shebang !!
 
-from src.lib.features import *
-from src.lib.response import *
-import src.lib.speeches as speeches
+###########################
+#                         #
+#  app.py - Main program  #
+#                         #
+###########################
+
+# Authors : Grégoire Badiche
+#           Samy Gharnaout
+#           Christine Khazzaka
+
+from src.lib.features import features
+from src.lib.response import most_relevant_document, get_phrase, pretty_response
 from src.lib.ux import Scene
+from src.lib.utils import list_files, ROOT
+import src.lib.speeches as speeches
+import src.lib.tfidf as tfidf
 
 # Used to change character encoding on Windows
 import os
@@ -21,20 +34,27 @@ print("\033]0;My first chatbot\007", end="")
 
 scene = Scene()
 
-def exit_handler(sig, frame):
+# Function used to detect CTRL+C hits
+def exit_handler(sig, _frame) -> None:
     signal.signal(sig, signal.SIG_IGN) # ignore additional signals
     scene.exit()
     exit(0)
 
+# Registers the handler
 signal.signal(signal.SIGINT, exit_handler)
+
+# If the OS is UNIX based (based :P), registers a terminal resize handler
 if(system() != "Windows"):
     signal.signal(signal.SIGWINCH, scene.update)
+# If the OS is Windows, changes terminal encoding to better display characters
 else:
     os.system("chcp 65001")
 
-root = 'src/cleaned'
-matrix, idf = tfidf.tf_idf_from_dir(root)
-words = matrix.words()
+currenttheme = "presidents"
+root = ROOT + '/cleaned/' + currenttheme
+scores, idf = tfidf.tf_idf_from_dir(root)
+# Alls the words across the documents of the current theme
+words = scores.rows
 
 scene.new("Hi!")
 scene.new("Type 'exit' or hit CTRL+C at any time to exit gracefully")
@@ -46,105 +66,89 @@ scene.new(
     "4. Get the list of president who spoke of a given word\n"
     "5. First president to talk about two words based on a set operation\n"
     "6. List of words said by all presidents\n"
+    "change theme - Changes the current dicussion theme\n"
     "Anything else : discuss with the chatbot!\n")
 
-def feature3():
-    scene.new("Which president do you want the list of?")
-    x = scene.handle()
-    if(lower(x) in [lower(n) for n in PRESIDENTS]):
-        scene.new("The list is :\n" + ", ".join(most_repeated_word(x, matrix, root)))
-    else:
-        scene.new("I don't know this president. Please try again.", error=1)
-    return
-
-def feature4():
-    scene.new("Which word should we take?")
-    x = scene.handle()
-    if(lower(x) in words):
-        scene.new(f"The presidents that talked about '{x}' are " + ", ".join(who_spoke_of(x, root)[0]))
-    else:
-        scene.new('None of the presidents ever talked about it', error=1)
-    return
-
-def feature5():
-    scene.new("What is the first word?")
-    x = scene.handle()
-    w1 = lower(x)
-    if(w1 not in words):
-        scene.new('None of the presidents ever talked about it', error=1)
-        return
-    scene.new("What is the second word?")
-    x = scene.handle()
-    w2 = lower(x)
-    if(w2 not in words):
-        scene.new('None of the presidents ever talked about it', error=1)
-        return
-    scene.new("What is the operation? Should be either 'and' or 'or'")
-    x = scene.handle()
-    op = lower(x)
-    if(not op in ["and", "or"]):
-        scene.new("This operation is unknown", error=1)
-        return
-    res = who_spoke_first([w1, w2], op, root)
-    if(res):
-        scene.new(f"The first president to talk about {w1} {op} {w2} is {res}")
-    else:
-        scene.new(f"None of the presidents ever talked about {w1} {op} {w2}")
-    return
-
-def featuretest():
-    with open('src/lib/c3VwZXIgc2VjcmV0', "r", encoding="utf8") as fd:
-        scene.new(fd.read(), _s=42)
-    scene.new("schtroumpf chat")
-
-features = {
-    "1": lambda: scene.new("The least important words are :\n" + ", ".join(least_important_words(matrix))),
-    "2": lambda: scene.new("The words with the highest scores are :\n" + ", ".join(highest_score(matrix))),
-    "3": feature3,
-    "4": feature4,
-    "5": feature5,
-    "6": lambda: scene.new("The words said by all are :\n" + ", ".join(words_said_by_all(matrix))),
-    "test": featuretest
-}
-
-def get_response(text:str) -> str:
+def get_response(text:str) -> str|int:
+    """
+    Takes a question, and returns an anwser (prettied) to it
+    May return:
+        str - the actual response
+        1 - no word latching the document
+        2 - the highest TF-IDF score word isn't in the text with the most similarity
+    """
     text = speeches.clean_text(text)
     text_vec = tfidf.term_frequency(text)
     text_mat = tfidf.tf_idf_score(text_vec, idf)
-    mrd = most_relevant_document(matrix, text_mat.reverse()[0], list_files(root, ".txt"))
+    mrd = most_relevant_document(scores, text_mat.reverse()[0], list_files(root, ".txt"))
+    # If it has no most relevant document, e.g no words of the question matching the document
     if(mrd == 0):
         return 0
     else:
-        hs = "" # highest score index
-        m = 0 # max
-        s = text_mat.scores # scores
-        for i in s:
-            if(s[i][0] > m):
-                m = s[i][0]
-                hs = i
-        with open(f"{root}/../speeches/{mrd}") as fd:
-            phrase = get_phrase(hs, fd.read())
-        if(phrase):
-            return phrase
-        else:
-            return 1
+        isfound = False
+        hsl = [] # highest scores list
+        maxitems:int = len([i for i in range(len(text_mat.matrix)) if i > 0])
+        while(not isfound):
+            hs = "" # highest score index
+            m = 0 # max
+            s = text_mat.matrix # scores
+            for i in range(len(s)):
+                if(text_mat.rows[i] in hsl): continue
+                if(s[i][0] > m):
+                    m = s[i][0]
+                    hs = text_mat.rows[i]
+            hsl.append(hs)
+            with open(f"{ROOT}/speeches/{currenttheme}/{mrd}", encoding='utf8') as fd:
+                phrase = get_phrase(hs, fd.read())
+            if(phrase):
+                return phrase
+            if(len(hsl) == maxitems):
+                isfound = True
+        return 1
 
 while True:
     inpt = scene.handle()
-    choice = lower(inpt).strip()
+    if(inpt == ""): continue
+    choice = speeches.clean_text(inpt).strip()
     if(choice == "exit"):
         scene.exit()
         exit(0)
     
+    # The choice is a feature
     if(choice in features.keys()):
-        features[choice]()
+        features[choice](scene)
+
+    # Changes theme
+    elif(choice == "change theme"):
+        scene.new(
+            "What do you want to talk about?\n"
+            "1. Speeches by French presidents\n"
+            "2. CLI articles on Wikipedia\n"
+        )
+
+        choices = {
+            "1": "presidents",
+            "2": "cli",
+        }
+
+        c = scene.handle()
+
+        if(not c in choices.keys()):
+            scene.new("This theme isn't valid.", error=True)
+        
+        currenttheme = choices[c]
+        root = ROOT + '/cleaned/' + currenttheme
+        scores, idf = tfidf.tf_idf_from_dir(root)
+        words = scores.rows
+        scene.new(f"Changed theme to {currenttheme}.")
     
     else:
-        x = get_response(inpt)
-        if(x not in [0, 1]):
-            scene.new(x)
+        res = get_response(inpt)
+        if(res not in [0, 1]):
+            res = pretty_response(choice, res)
+            scene.new(res)
         else:
-            if(x == 1):
-                scene.new("Je ne peux malheureusement pas répondre à cela pour l'instant.", error=True)
+            if(res == 1):
+                scene.new("Unfortunately, I cannot provide an answer to this at the moment.", error=True)
             else:
-                scene.new("Je n'ai pas compris. Pouvez-vous reformuler ?", error=True)
+                scene.new("I didn't understood. May you rephrase?", error=True)

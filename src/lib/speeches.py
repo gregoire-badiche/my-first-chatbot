@@ -106,8 +106,10 @@ if(__name__ == "__main__"):
     from utils import list_files
     files = list_files(f"{ROOT}/speeches/presidents", 'txt')
     convert_texts(files, f"{ROOT}/cleaned/presidents", f"{ROOT}/speeches/presidents")
+
     files = list_files(f"{ROOT}/speeches/cli", 'txt')
     convert_texts(files, f"{ROOT}/cleaned/cli", f"{ROOT}/speeches/cli")
+    
     print("Cleaned speeches")
     # I use zsh, and get triggered when the program don't exits with code 0
     sys.exit(0)

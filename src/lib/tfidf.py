@@ -4,6 +4,10 @@
 #                                                   #
 #####################################################
 
+# Authors : Grégoire Badiche
+#           Samy Gharnaout
+#           Christine Khazzaka
+
 import math
 
 # Wrapper used to call the librairy as a main program

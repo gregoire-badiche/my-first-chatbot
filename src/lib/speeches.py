@@ -4,6 +4,10 @@
 #                                              #
 ################################################
 
+# Authors : Grégoire Badiche
+#           Samy Gharnaout
+#           Christine Khazzaka
+
 # re for RegEx
 import os, re
 
@@ -84,15 +88,16 @@ def convert_texts(files:list[str], destination_directory:str, origin_directory:s
     # For every file that should be cleaned (t stands for text)
     for t in files:
         # Opens and cleans the text
-        with open(f"{origin_directory}/{t}", "r") as f_read:
+        with open(f"{origin_directory}/{t}", "r", encoding='utf8') as f_read:
             text = f_read.read()
             cleaned = clean_text(text)
 
             # And then writes it into a new file
-            with open(f"{destination_directory}/{t}", "w") as f_write:
+            with open(f"{destination_directory}/{t}", "w", encoding='utf8') as f_write:
                 f_write.write(cleaned)
 
 def tokenize(text:str) -> list[str]:
+    """ Cleans and splits the text """
     return clean_text(text).split(' ')
 
 # If the module is executed as a script, we automatically clean the texts
@@ -101,6 +106,8 @@ if(__name__ == "__main__"):
     from utils import list_files
     files = list_files(f"{ROOT}/speeches/presidents", 'txt')
     convert_texts(files, f"{ROOT}/cleaned/presidents", f"{ROOT}/speeches/presidents")
+    files = list_files(f"{ROOT}/speeches/cli", 'txt')
+    convert_texts(files, f"{ROOT}/cleaned/cli", f"{ROOT}/speeches/cli")
     print("Cleaned speeches")
     # I use zsh, and get triggered when the program don't exits with code 0
     sys.exit(0)

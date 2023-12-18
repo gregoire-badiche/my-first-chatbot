@@ -5,11 +5,13 @@
 #                                                     #
 #######################################################
 
+# author : Grégoire Badiche
 # sources : Wikipedia (https://en.wikipedia.org/wiki/ANSI_escape_code)
 #           My big brain 🧠 🧠 🧠
 
 from os import get_terminal_size
 
+# CSI
 ESC = "\u001b["
 
 COLORS_FG = {
@@ -34,21 +36,25 @@ COLORS_BG = {
     "white": "47m"
 }
 
-def write(text):
+def write(text:str) -> None:
+    """ Shorthand to print text without automatic newline """
     print(text, end='')
 
-def setcode(code):
+def setcode(code:str|int) -> None:
+    """ Shorthand to set ANSI code """
     write(f"{ESC}{code}")
 
-def resetcolors():
+def resetcolors()-> None:
+    """ Resets the terminal colors back to default """
     setcode("39m")
     setcode("49m")
 
-def clear():
+def clear() -> None:
+    """ Clears the terminal """
     write("\033c")
 
 class Bubble:
-    def __init__(self, width:int, orientation:bool, text:str = "", error:bool = 0, _s = 0) -> None:
+    def __init__(self, width:int, orientation:bool, text:str = "", error:bool = 0, _s:int = 0) -> None:
         self.width = width
         self.error = error
         self.text = text
@@ -58,6 +64,7 @@ class Bubble:
         self.parse()
     
     def draw(self, padding:int = 0, consolewidth:int = 0) -> None:
+        """ Draws the bubble """
         consolewidth = consolewidth if consolewidth else get_terminal_size()[0]
         c = lambda: (setcode(COLORS_FG["red"]) if self.error else setcode(COLORS_FG["cyan"])) if self.orientation else (setcode(COLORS_FG["red"]) if self.error else setcode(COLORS_FG["green"]))
         d = lambda: setcode("39m") # Reset FG color
@@ -69,6 +76,7 @@ class Bubble:
             else:
                 w = max([len(l.strip()) for l in self.parsedtext]) + 2
         pad = " " * padding if not(self.orientation) else " " * (consolewidth - w - padding - 2)
+        # Sets the cursor at the beginnig of the line, and draws the box
         setcode("G")
         c()
         write(pad + "╭")
@@ -99,6 +107,10 @@ class Bubble:
         write('\n')
     
     def parse(self) -> None:
+        """ 
+        Parses the text into an array, stored inside self.parsedtext 
+        in order to print the text without any overflow
+        """
         self.parsedtext = []
         width = self.width - 4 # Removes border and padding
         phrases = self.text.split('\n')
@@ -142,7 +154,9 @@ class Bubble:
         self.draw(padding, consolewidth)
 
 class Scene:
+    """ Scene object regroups all the Bubbles and updates them automatically """
     def __init__(self) -> None:
+        """ Creates constants, clears the terminal """
         self.bubbles:list[Bubble] = []
         self.consolewidth = get_terminal_size()[0]
         self.width = int(self.consolewidth * 2 / 3)
@@ -150,6 +164,7 @@ class Scene:
         clear()
     
     def update(self, *args) -> None:
+        """ Resizes all the Bubbles if the terminal has been resized """
         if(self.consolewidth == get_terminal_size()[0]): return
         clear()
         self.consolewidth = get_terminal_size()[0]
@@ -158,11 +173,13 @@ class Scene:
         for bubble in self.bubbles:
             bubble.resize(self.width, self.padding, self.consolewidth)
     
-    def new(self, text:str, orientation:bool = 0, error:bool = 0, _s = 0) -> None:
+    def new(self, text:str, orientation:bool = 0, error:bool = 0, _s:int = 0) -> None:
+        """ Creates a new text Bubble """
         self.bubbles.append(Bubble(self.width, orientation, text, error, _s=_s))
         self.bubbles[-1].draw(self.padding, self.consolewidth)
     
     def handle(self) -> str:
+        """ Handles and return input() in a pretty manner, and create new Bubble for the text input """
         write("> ")
         txt = input()
         if(txt == ""):
@@ -176,5 +193,6 @@ class Scene:
         self.update()
         return txt
     
-    def exit(self):
+    def exit(self) -> None:
+        """ Prints exit message """
         self.new("Bye!")

@@ -4,8 +4,11 @@
 #                                           #
 #############################################
 
+# Authors : Grégoire Badiche
+#           Samy Gharnaout
+#           Christine Khazzaka
+
 import os
-from math import sqrt
 
 # the `src` directory
 ROOT = f"{os.path.dirname(os.path.realpath(__file__))}/.."
@@ -30,14 +33,14 @@ NAMES_PAIRS = {
     "Sarkozy": "Nicolas",
 }
 
-LOWERCASE_LETTERS = "abcdefghijklmnopqrstuvwxyzüéâäåàçêëèïîìôöòûùÿáíóúñ"
-UPPERCASE_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZÜÉÂÄÅÀÇÊËÈÏÎÌÔÖÒÛÙŸÁÍÓÚÑ"
+LOWERCASE_LETTERS = "abcdefghijklmnopqrstuvwxyzüéâäåàçêëèïîìôöòûùÿáíóúñ0123456789"
+UPPERCASE_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZÜÉÂÄÅÀÇÊËÈÏÎÌÔÖÒÛÙŸÁÍÓÚÑ0123456789"
 # A dictionnary associating the uppercase letter with the lowercase one, used to lowercase
-# simply the characters with accents, as they are spread in the ASCII table
+# easily the characters with accents, as they are spread in the ASCII table
 DIC_UPPER_LOWER = {UPPERCASE_LETTERS[i]: LOWERCASE_LETTERS[i] for i in range(len(LOWERCASE_LETTERS))}
 
-UNACCENT_K = "abcdefghijklmnopqrstuvwxyzüéâäåàçêëèïîìôöòûùÿáíóúñ"
-UNACCENT_V = "abcdefghijklmnopqrstuvwxyzueaaaaceeeiiiooouuyaioun"
+UNACCENT_K = "abcdefghijklmnopqrstuvwxyzüéâäåàçêëèïîìôöòûùÿáíóúñ0123456789"
+UNACCENT_V = "abcdefghijklmnopqrstuvwxyzueaaaaceeeiiiooouuyaioun0123456789"
 DIC_UNACCENT = {UNACCENT_K[i]: UNACCENT_V[i] for i in range(len(UNACCENT_K))}
 
 QUESTION_STARTERS = {
@@ -73,6 +76,7 @@ def lower(text:str) -> str:
     return res
 
 def startwith(text:str, word:str) -> bool:
+    """Check if a string starts with another string"""
     if(len(text) < len(word)): return False
     res = True
     for i in range(len(word)):
@@ -82,12 +86,13 @@ def startwith(text:str, word:str) -> bool:
     return res
 
 class matrix:
-    matrix:list[list[int]]
+    """Generic matrix class used to type parameters, and handle matrix more easily"""
+    matrix:list[list[float]]
     rows:list[str]
     cols:list[str]
 
-    def __init__(self, matrix:list[list[int]], cols:list[str], rows:list[str]) -> None:
-        self.matrix:list[list[int]] = matrix
+    def __init__(self, matrix:list[list[float]], cols:list[str], rows:list[str]) -> None:
+        self.matrix:list[list[float]] = matrix
         self.rows:list[str] = rows
         self.cols:list[str] = cols
     

@@ -1,0 +1,235 @@
+Préparation avant l'installation
+
+Obtenir l'image d'installation
+
+Visitez la page de Téléchargement et, selon la façon dont vous voulez démarrer, récupérez l'image ISO ou bien l'image «netboot» ainsi que la signature GnuPG correspondante.
+
+Vérifier la signature
+
+Il est recommandé de vérifier la signature de l'image avant de l'utiliser, particulièrement lors du téléchargement depuis un miroir HTTP, puisque ceux-ci sont sujet à être interceptés pour fournir des fichiers malveillants.
+
+Depuis un système avec GnuPG installé, faites cette vérification en téléchargeant la signature PGP de l'ISO (dans "Checksums" sur la page de téléchargement) dans le répertoire contenant l'ISO et en la vérifiant avec:
+
+$ gpg --keyserver-options auto-key-retrieve --verify archlinux-version-x86_64.iso.sig
+
+Depuis une installation Arch Linux existante, vous pouvez également utiliser la commande:
+
+$ pacman-key -v archlinux-version-x86_64.iso.sig
+
+Note:
+
+La signature elle-même pourrait être manipulée si elle est téléchargée à partir d'un site miroir, au lieu de l'être à partir de archlinux.org comme ci-dessus. Dans ce cas, assurez-vous que la clé publique, qui est utilisée pour décoder la signature, soit signée par une autre clé digne de confiance. La commande gpg affichera l'empreinte de la clé publique. Une autre méthode pour vérifier l'authenticité de la signature consiste à s'assurer que l'empreinte de la clé publique est identique à l'empreinte de la clé du développeur Arch Linux qui a signé le fichier ISO. Voir Wikipedia:Public-key cryptography pour plus d'informations sur le processus d'authentification des clés par une clé publique.
+
+Préparer un support d'installation
+
+L'image d'installation peut être déployée sur la machine concernée via une clé USB, un disque optique, ou par réseau avec PXE : consultez l'article approprié pour préparer vous-même un support d'installation selon de l'image choisie.
+
+Démarrer l'environnement «live»
+
+Note: Les images d'Arch Linux ne prennent pas en charge la technologie Secure Boot et vous devrez la désactiver pour démarrer depuis le support d'installation. Vous pourrez si vous le souhaitez le configurer une fois l'installation terminée, en suivant ces instructions.
+
+Choisissez le périphérique de démarrage pour utiliser le support préparé précédemment. Généralement, la manipulation consiste à appuyer sur une touche — fréquemment mentionnée sur l'écran d'accueil de votre machine — durant le POST. Référez-vous au manuel de votre carte mère pour plus de détails. Lorsque le menu du support d'installation apparaît, sélectionnez Arch Linux install medium et validez avec la touche Entrée. Astuce: L'image d'installation utilise GRUB pour démarrer sur les UEFI et Syslinux sur les BIOS. Consultez README.bootparams pour une liste des paramètres de démarrage.
+
+Vous serez connecté dans la première console virtuelle sous l'utilisateur root et vous verrez une invite de commande zsh
+
+Pour changer de console — par exemple pour consulter ce guide avec Lynx pendant l'installation — vous pouvez utiliser Alt+flèches de direction. Pour modifier les fichiers de configuration, mcedit(1), nano et vim sont disponibles. Voir pkglist.x86_64.txt pour consulter la liste des paquets inclus dans le support d'installation.
+
+Disposition du clavier en console La disposition par défaut est le clavier US. Les dispositions disponibles peuvent être listées par :
+
+# ls /usr/share/kbd/keymaps/**/*.map.gz
+
+Pour modifier la disposition du clavier, passez le nom du fichier correspondant à loadkeys(1) en omettant le chemin du fichier ainsi que l'extension. Par exemple pour la disposition Française vous pouvez utiliser :
+
+# loadkeys fr-latin1
+
+Les polices de la console se trouvent dans /usr/share/kbd/consolefonts/ et peuvent de même être modifiées avec setfont(8).
+
+Vérifier le mode de démarrage
+
+Pour connaître le «mode de démarrage», consultez le répertoire efivars:
+
+# ls /sys/firmware/efi/efivars
+
+Si la commande affiche le répertoire sans erreur, alors le système est démarré en mode UEFI. Si le répertoire n’existe pas, le système a probablement démarré en mode BIOS (ou CSM). Si le système n'a pas démarré dans le mode souhaité, consultez le manuel de votre carte mère.
+
+Connexion à Internet
+
+Pour configurer la connexion réseau dans l'image live, suivez ces étapes :
+
+Vérifiez que votre Carte réseau est répertoriée et activée, par exemple avec ip-link(8): # ip link
+
+Pour les connections sans fil comme le Wi-Fi ou les réseaux mobiles (4G...), vérifiez que l'utilitaire rfkill ne bloque pas l'interface. Connexion au réseau:
+
+Ethernet—Connectez le câble. Wi-Fi—Authentifiez-vous sur le réseau sans fil avec iwctl. Réseaux mobiles—Connectez-vous au réseau avec l'utilitaire mmcli.
+
+Configurez votre connexion réseau:
+
+DHCP: l'adressage dynamique des adresses IP et des serveurs DNS (fourni par systemd-networkd (Français) et systemd-resolved (Français) devraient fonctionner par défaut) pour les protocoles Ethernet, Wi-Fi and Mobiles. Adresse IP statique : suivez Network configuration#Static IP address.
+
+La connexion peut être confirmée avec ping: # ping archlinux.org
+
+Note: Dans l'image d'installation, systemd-networkd (Français), systemd-resolved (Français), iwd et ModemManager sont préconfigurés et activés par défaut. Ce ne sera pas le cas du système installé.
+
+Mise à jour de l'horloge système
+
+Dans l'environnement live, systemd-timesyncd est activé par défaut et l'heure sera synchronisée automatiquement dès qu'une connexion à Internet sera établie.
+
+Utilisez timedatectl(1) pour vous assurer que l'horloge système est correctement réglée.
+
+# timedatectl
+
+Partitionnement des disques Une fois reconnus par le système live, les disques se verront affectés un périphérique de type bloc tel que /dev/sda, /dev/nvme0n1 ou /dev/mmcblk0. Pour identifier ces périphériques, utilisez lsblk ou fdisk.
+
+# fdisk -l
+
+Les résultats se terminant par rom, loop ou airoot peuvent être ignorés. Les périphériques mmcblk* se terminant par rpbm, boot0 et boot1 peuvent être ignorés.
+
+Les partitions suivantes sont nécessaires sur un périphériques choisi:
+
+Une partition racine /. Pour démarrer en mode UEFI: une partition EFI.
+
+Si vous souhaitez utiliser LVM, un chiffrement de votre système ou encore RAID, faites le maintenant.
+
+Utilisez fdisk or parted pour modifier la table de partitions. Par exemple : # fdisk /dev/disque_en_question
+
+Note:
+
+Si votre disque n’apparaît pas, vérifiez que le contrôleur du disque n'est pas en mode RAID. Si le disque depuis lequel vous souhaitez démarrer possède déjà une partition EFI, n'en recréez pas une autre mais utilisez la partition pré-existante. La Swap peut être définie sur un fichier d'échange pour les systèmes de fichier qui le prennent en charge.
+
+D'autres points de montage, tels que /mnt/efi ne devrait être envisagé que si le chargeur d'amorçage utilisé est capable de charger le noyau et l'initramfs directement depuis la partition racine. Voir l'avertissement dans Arch boot process (Français)#Chargeur d'amorçage.
+
+Formatage des partitions Une fois les partitions crées, celles-ci doivent être formatées avec un système de fichier approprié. Consultez File systems#Create a file system pour plus de détails.
+
+Par exemple, pour créer un système de fichier ext4 sur /dev/partition_racine, utilisez :
+
+# mkfs.ext4 /dev/partition_racine
+
+Si vous avez crée une partition d'échange, initialisez la avec mkswap(8):
+
+# mkswap /dev/partition_d'échange
+
+Note: Pour les configurations avec LVM, chiffrement ou RAID, remplacez /dev/*_partition par le chemin vers le périphérique de type bloc approprié. Si vous avez créé une partition système EFI, formatez-la en FAT32 avec mkfs.fat(8).
+
+Attention: Ne formatez la partition système EFI que si vous l'avez créée pendant le partitionnement. S'il y avait déjà une partition système EFI sur le disque précédemment, son formatage peut détruire les chargeurs d'amorçage des autres systèmes d'exploitation installés. # mkfs.fat -F 32 /dev/efi_system_partition
+
+Montage des systèmes de fichiers
+
+Montez la partition racine dans /mnt. Par exemple, si la partition racine est /dev/partition_racine:
+
+# mount /dev/partition_racine /mnt
+
+Créez chaques points de montage restants (tels que /mnt/boot) et montez les volumes dans l'ordre hiérarchique correspondant.
+
+Astuce: Utilisez mount(8) avec l'option --mkdir pour créer le point de montage spécifié. Vous pouvez également le créer au préalable à l'aide de mkdir(1). Pour les systèmes avec un UEFI, montez la partition système EFI :
+
+# mount --mkdir /dev/efi_system_partition /mnt/boot
+
+Si vous avez créé une partition d'échange, activez-la avec swapon(8):
+
+# swapon /dev/partition_d'échange
+
+genfstab(8) détectera plus tard les systèmes de fichiers et l'espace d'échange montés.
+
+Installation
+
+Sélection du miroir
+
+Les paquets à installer doivent être téléchargés depuis les miroirs des dépôts officiels tels que définis dans /etc/pacman.d/mirrorlist. Sur le système live, après connexion à Internet, reflector met à jour la liste des miroirs en sélectionnant les 20 miroirs les plus récemment synchronisés et en les triant par vitesse de téléchargement.
+
+Plus le miroir se trouve haut dans la liste, plus grande est sa priorité lors d'un téléchargement. Vérifiez le contenu de /etc/pacman.d/mirrorlist et modifiez le si besoin. Placez les miroirs les plus proches géographiquement en haut de la liste, bien que d'autres critères sont à prendre en compte
+
+Par exemple pour trouver un miroir plus proche de chez vous (et/ou plus rapide) en utilisant reflector:
+
+# reflector --country France --age 12 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
+
+Cette commande devrait sélectionner les miroirs HTTPS synchronisés ces 12 dernières heures en France, les trier par vitesse de téléchargement, et mettre à jour le fichier /etc/pacman.d/mirrorlist.
+
+pacstrap copiera plus tard ce fichier sur le nouveau système, prendre votre temps sur cette étape peut donc vous en faire gagner plus tard.
+
+Installation des paquets essentiels
+
+Note: Aucun logiciel ou configuration (à l'exception de /etc/pacman.d/mirrorlist) n'est transféré de l'environnement «live» vers le système installé. Utilisez le script pacstrap(8) en lui indiquant le répertoire correspondant à la racine du système suivi des paquets ou groupes à installer (séparés par un espace). Pour le système de base, installez le "méta-paquet" base, le noyau, et le microprogramme pour les périphériques les plus courants:
+
+# pacstrap -K /mnt base linux linux-firmware
+
+Astuce:
+
+Vous pouvez remplacer linux par un autre noyau de votre choix ou l'omettre dans l'installation d'un container. Vous pouvez également omettre le microprogramme si vous installez dans une machine virtuelle un container.
+
+Le paquet base n'inclut pas tous les outils de l'installation «live», donc l'installation d'autres paquets peut être nécessaire pour obtenir un système de base entièrement fonctionnel. Pour installer d'autres paquets ou groupes de paquets, ajoutez leurs noms à la commande pacstrap ci-dessus (séparés par des espaces) ou utilisez pacman pour les installer pendant que vous êtes «chroot»é dans votre nouvelle installation. En particulier, envisagez d'installer:
+
+les utilitaires nécessaires à la gestion des systèmes de fichiers, les utilitaires pour accéder aux partitions RAID ou LVM, les microprogrammes spécifiques à des périphériques qui ne seraient pas déjà inclus dans linux-firmware, (comme sof-firmware pour les cartes son), les logiciels nécessaires à la connexion au réseau (par exemple, un gestionnaire de réseau ou un client DHCP autonome, un logiciel d'authentification pour le Wi-Fi, un gestionnaire de modem pour les réseaux mobiles), un éditeur de texte
+
+les paquets de documentation comme man-db, man-pages et texinfo.
+
+A titre d'exemple, consultez la liste des paquets disponibles sur le média d'installation.
+
+Configuration du système
+
+Fstab Générez le fichier fstab (utiliser -U ou -L pour définir par UUID ou étiquettes, respectivement):
+
+# genfstab -U /mnt >> /mnt/etc/fstab
+
+Vérifiez le fichier /mnt/etc/fstab obtenu, et modifiez-le en cas d'erreur.
+
+Chroot Chrooter dans le nouveau système:
+
+# arch-chroot /mnt
+
+Fuseau Horaire Définissez le fuseau horaire, par exemple pour la France:
+
+# ln -sf /usr/share/zoneinfo/Europe/Paris /etc/localtime
+
+Lancez hwclock(8) pour générer /etc/adjtime:
+
+# hwclock --systohc
+
+Cette commande repose sur l'hypothèse que l'horloge matérielle est réglée sur UTC. Consultez System time (Français)#Standard de temps pour plus de détails.
+
+Locales Modifiez /etc/locale.gen et dé-commentez votre locale, puis générez les locales avec la commande suivante:
+
+# locale-gen
+
+Créez le fichier locale.conf(5) et définissez la variable LANG correspondante :
+
+/etc/locale.conf LANG=fr_FR.UTF-8 Éditez le fichier vconsole.conf(5) afin d'y spécifier la disposition de clavier que vous souhaitez conserver :
+
+/etc/vconsole.conf KEYMAP=fr-latin1
+
+Configuration réseau
+
+Créez le fichier hostname :
+
+/etc/hostname lenomdemamachine
+
+Terminez la configuration du réseau pour le nouvel environnement installé. Il se peut que vous deviez installer un logiciel de gestion de réseau spécifique.
+
+Initramfs La création d'un nouvel initramfs n'est généralement pas nécessaire, car mkinitcpio a été lancé lors de l'installation du noyau avec pacstrap.
+
+Pour LVM, le chiffrement ou RAID, modifiez mkinitcpio.conf(5) et recréez l'image initramfs:
+
+# mkinitcpio -P
+
+Mot de passe administrateur Définissez un mot de passe pour root:
+
+# passwd
+
+Installation d'un chargeur d'amorçage
+
+Choisissez et installez un chargeur d'amorçage adapté. Si vous avez un CPU Intel ou AMD, pensez à activer également les mises-à-jour du microcode.
+
+Redémarrer
+
+Sortez de l'environnement chroot en tapant (exit ou par le raccourci Ctrl+D).
+
+Si vous le souhaitez, démontez manuellement toutes les partitions avec umount -R /mnt : cela permet de détecter les partitions "occupées" et d'en trouver la cause avec fuser(1).
+
+Enfin, redémarrez la machine en tapant reboot : toutes les partitions encore montées seront automatiquement démontées par systemd. N'oubliez pas de retirer le support d'installation et vous pourrez vous connecter au nouveau système avec le compte root.
+
+Après le redémarrage
+
+Consultez les Recommandations générales pour des indications sur l'administration de votre système et des tutoriels de post-installation (comme la création de comptes utilisateurs non privilégiés, la configuration d'une interface utilisateur graphique, du son ou d'un pavé tactile).
+
+Pour une liste des applications pouvant présenter un intérêt, voir la liste des applications.
+
+Retrieved from "https://wiki.archlinux.org/index.php?title=Installation_guide_(Français)&oldid=790324"

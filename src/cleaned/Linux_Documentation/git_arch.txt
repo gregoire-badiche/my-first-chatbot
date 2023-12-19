@@ -1,0 +1,1 @@
+pour installer git sur arch il suffit d utiliser la commande sudo pacman s git

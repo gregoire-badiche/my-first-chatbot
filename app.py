@@ -124,11 +124,13 @@ while True:
             "What do you want to talk about?\n"
             "1. Speeches by French presidents\n"
             "2. CLI articles on Wikipedia\n"
+            "3. Linux Documentation for different Distributions"
         )
 
         choices = {
             "1": "presidents",
             "2": "cli",
+            "3": "Linux_Documentation"
         }
 
         c = scene.handle()

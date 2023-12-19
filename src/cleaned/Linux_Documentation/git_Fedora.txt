@@ -1,0 +1,1 @@
+pour installer git sur fedora centos ou rhel il suffit d executer la commande suivante sudo yum install git

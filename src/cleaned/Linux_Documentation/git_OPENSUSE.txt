@@ -1,0 +1,1 @@
+pour installer git sur opensuse il suffit d executer la commande suivante sudo zypper install git

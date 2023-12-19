@@ -1,0 +1,1 @@
+pour installer git sur gentoo il suffit d executer la commande suivante emerge ask verbose dev vcs git

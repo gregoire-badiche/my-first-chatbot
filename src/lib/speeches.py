@@ -109,6 +109,9 @@ if(__name__ == "__main__"):
 
     files = list_files(f"{ROOT}/speeches/cli", 'txt')
     convert_texts(files, f"{ROOT}/cleaned/cli", f"{ROOT}/speeches/cli")
+
+    files = list_files(f"{ROOT}/speeches/Linux_Documentation", 'txt')
+    convert_texts(files, f"{ROOT}/cleaned/Linux_Documentation", f"{ROOT}/speeches/Linux_Documentation")
     
     print("Cleaned speeches")
     # I use zsh, and get triggered when the program don't exits with code 0

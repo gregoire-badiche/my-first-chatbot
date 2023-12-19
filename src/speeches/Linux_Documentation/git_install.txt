@@ -1,0 +1,33 @@
+Installer Git avec un gestionnaire de packages Git est livré avec toutes les principales distributions Linux. Ainsi, le moyen le plus simple d'installer Git consiste à utiliser le gestionnaire de packages de votre distribution Linux. Pour Debian, Ubuntu ou Linux Mint :
+
+$ sudo apt-get install git
+
+Pour Fedora, CentOS ou RHEL :
+
+$ sudo yum install git
+
+Pour ArchLinux :
+
+$ sudo pacman -S git
+
+Pour OpenSUSE :
+
+$ sudo zypper install git
+
+Pour Gentoo :
+
+$ emerge --ask --verbose dev-vcs/git
+
+Compiler Git depuis la source Si, pour une raison quelconque, vous souhaitez créer Git à partir de la source, vous pouvez suivre les instructions ci-dessous. Installer les dépendances pour construire Git Avant de construire Git, installez d'abord les dépendances. Debian, Ubuntu ou Linux Mint :
+
+$ sudo apt-get install libcurl4-gnutls-dev libexpat1-dev gettext libz-dev libssl-dev asciidoc xmlto docbook2x
+
+Fedora, CentOS ou RHEL :
+
+$ sudo yum install curl-devel expat-devel gettext-devel openssl-devel zlib-devel asciidoc xmlto docbook2x
+
+Compiler Git depuis la source
+
+Téléchargez la dernière version de Git sur https://github.com/git/git/releases. Puis compilez et installez Git sous /usr comme suit. Notez que si vous souhaitez l'installer dans un répertoire différent (par exemple, /opt), remplacez --prefix=/usr dans la commande configure par quelque chose d'autre.
+
+$ cd git-x.x.x $ make configure $ ./configure --prefix=/usr $ make all doc info $ sudo make install install-doc install-html install-info

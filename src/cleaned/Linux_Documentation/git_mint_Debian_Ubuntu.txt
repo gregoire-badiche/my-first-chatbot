@@ -1,0 +1,1 @@
+pour installer git sur debian ubuntu ou linux mint il suffit d executer la commande sudo apt get install git

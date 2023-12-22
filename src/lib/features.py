@@ -6,7 +6,6 @@
 
 # Authors : Grégoire Badiche
 #           Samy Gharnaout
-#           Christine Khazzaka
 
 import src.lib.speeches as speeches
 import src.lib.tfidf as tfidf

@@ -6,7 +6,7 @@
 
 # Authors : Grégoire Badiche
 #           Samy Gharnaout
-#           Christine Khazzaka
+#           Christine Khazaka
 
 import math
 

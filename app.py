@@ -9,7 +9,7 @@
 
 # Authors : Grégoire Badiche
 #           Samy Gharnaout
-#           Christine Khazzaka
+#           Christine Khazaka
 
 from src.lib.features import features
 from src.lib.response import most_relevant_document, get_phrase, pretty_response
@@ -74,8 +74,8 @@ def get_response(text:str) -> str|int:
     Takes a question, and returns an anwser (prettied) to it
     May return:
         str - the actual response
-        1 - no word latching the document
-        2 - the highest TF-IDF score word isn't in the text with the most similarity
+        0 - no word matching the document
+        1 - the highest TF-IDF score word isn't in the text with the most similarity
     """
     text = speeches.clean_text(text)
     text_vec = tfidf.term_frequency(text)

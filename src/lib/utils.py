@@ -4,9 +4,7 @@
 #                                           #
 #############################################
 
-# Authors : Grégoire Badiche
-#           Samy Gharnaout
-#           Christine Khazzaka
+# Author : Grégoire Badiche
 
 import os
 

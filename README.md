@@ -1,6 +1,6 @@
 # my-first-chatbot
 
-The Python Project at EFREI
+A CLI chatbot bsaed on the TF-IDF method, written in Python for a semestrial project at EFREI
 
 ## What is it about?
 
